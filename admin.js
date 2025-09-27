@@ -1,0 +1,577 @@
+// Vérification de l'authentification
+function checkAuth() {
+    const isLoggedIn = sessionStorage.getItem('adminLoggedIn');
+    const loginTime = sessionStorage.getItem('adminLoginTime');
+    const currentTime = Date.now();
+    
+    if (!isLoggedIn || currentTime - loginTime > 7200000) { // 2 heures
+        window.location.href = 'admin-login.html';
+        return false;
+    }
+    return true;
+}
+
+// Déconnexion
+function logout() {
+    sessionStorage.removeItem('adminLoggedIn');
+    sessionStorage.removeItem('adminLoginTime');
+    window.location.href = 'admin-login.html';
+}
+
+// Gestion du menu mobile
+function toggleMobileMenu() {
+    const sidebar = document.querySelector('.admin-sidebar');
+    const overlay = document.querySelector('.mobile-overlay');
+    
+    sidebar.classList.toggle('mobile-open');
+    overlay.classList.toggle('active');
+}
+
+function closeMobileMenu() {
+    const sidebar = document.querySelector('.admin-sidebar');
+    const overlay = document.querySelector('.mobile-overlay');
+    
+    sidebar.classList.remove('mobile-open');
+    overlay.classList.remove('active');
+}
+
+// Gestion des sections
+function showSection(sectionId) {
+    // Masquer toutes les sections
+    document.querySelectorAll('.admin-section').forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    // Désactiver tous les liens du menu
+    document.querySelectorAll('.menu-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    // Afficher la section sélectionnée
+    document.getElementById(sectionId).classList.add('active');
+    
+    // Activer le lien du menu
+    document.querySelector(`[onclick="showSection('${sectionId}')"]`).classList.add('active');
+    
+    // Fermer le menu mobile après sélection
+    closeMobileMenu();
+    
+    // Mettre à jour les statistiques si on affiche le dashboard
+    if (sectionId === 'dashboard') {
+        updateDashboardStats();
+    }
+}
+
+// Stockage des produits (simulation d'une base de données)
+let products = JSON.parse(localStorage.getItem('bkshoes_products')) || [];
+
+// Initialiser les produits au premier chargement (système vide par défaut)
+if (!localStorage.getItem('bkshoes_products')) {
+    localStorage.setItem('bkshoes_products', JSON.stringify([]));
+    localStorage.setItem('bkshoes_products_timestamp', Date.now());
+    console.log('🆕 Système initialisé avec base de données vide');
+}
+
+// Sauvegarder les produits
+function saveProducts() {
+    localStorage.setItem('bkshoes_products', JSON.stringify(products));
+    
+    // Déclencher une mise à jour sur le site principal
+    const timestamp = Date.now();
+    localStorage.setItem('bkshoes_products_timestamp', timestamp);
+    
+    updateDashboardStats();
+    updateCategoryStats();
+    loadProducts();
+    
+    console.log('✅ Produits sauvegardés et synchronisés avec le site principal');
+}
+
+// Fonction pour mettre à jour automatiquement les pages du site web
+function updateWebsitePages() {
+    console.log('🔄 Mise à jour automatique des pages du site web...');
+    
+    const categories = ['mocassins', 'ballerines', 'mules', 'sandales', 'baskets', 'bottes'];
+    
+    categories.forEach(category => {
+        const categoryProducts = products.filter(p => p.category === category && p.status === 'active');
+        updateCategoryPage(category, categoryProducts);
+    });
+    
+    // Déclencher un événement pour notifier les pages ouvertes
+    localStorage.setItem('bkshoes_update_trigger', Date.now());
+    
+    addActivity('Pages du site mises à jour automatiquement');
+    console.log('✅ Toutes les pages du site ont été mises à jour');
+}
+
+// Fonction pour mettre à jour une page de catégorie spécifique
+function updateCategoryPage(category, categoryProducts) {
+    const categoryData = {
+        category: category,
+        products: categoryProducts.map(product => ({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            images: product.images || [product.image],
+            sizes: product.sizes || ['37', '38', '39', '40', '41'],
+            description: product.description,
+            status: product.status
+        })),
+        lastUpdate: Date.now()
+    };
+    
+    // Stocker les données de la catégorie
+    localStorage.setItem(`bkshoes_${category}_data`, JSON.stringify(categoryData));
+    
+    console.log(`📄 Page ${category} mise à jour avec ${categoryProducts.length} produits`);
+}
+
+// Charger les produits dans le tableau
+function loadProducts() {
+    const tbody = document.getElementById('productsTableBody');
+    const categoryFilter = document.getElementById('categoryFilter').value;
+    const searchTerm = document.getElementById('searchProducts').value.toLowerCase();
+    
+    let filteredProducts = products;
+    
+    // Filtrer par catégorie
+    if (categoryFilter) {
+        filteredProducts = filteredProducts.filter(p => p.category === categoryFilter);
+    }
+    
+    // Filtrer par recherche
+    if (searchTerm) {
+        filteredProducts = filteredProducts.filter(p => 
+            p.name.toLowerCase().includes(searchTerm) ||
+            p.category.toLowerCase().includes(searchTerm)
+        );
+    }
+    
+    tbody.innerHTML = '';
+    
+    filteredProducts.forEach(product => {
+        const mainImage = product.images && product.images[0] ? product.images[0] : (product.image || 'images/placeholder.jpg');
+        const sizesText = product.sizes ? product.sizes.join(', ') : '37-41';
+        
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>
+                <div class="product-image-cell">
+                    <img src="${mainImage}" alt="${product.name}" onerror="this.src='images/placeholder.jpg'">
+                    ${product.images && product.images.length > 1 ? `<span class="image-count">+${product.images.length - 1}</span>` : ''}
+                </div>
+            </td>
+            <td>
+                <div class="product-name-cell">
+                    <strong>${product.name}</strong>
+                    <small>Pointures: ${sizesText}</small>
+                </div>
+            </td>
+            <td><span class="category-badge ${product.category}">${getCategoryName(product.category)}</span></td>
+            <td>${product.price} DH</td>
+            <td><span class="status-badge ${product.status}">${getStatusName(product.status)}</span></td>
+            <td>
+                <div class="action-buttons">
+                    <button class="edit-btn" onclick="editProduct(${product.id})" title="Modifier">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="delete-btn" onclick="deleteProduct(${product.id})" title="Supprimer">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="view-btn" onclick="viewProduct(${product.id})" title="Voir détails">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+// Obtenir le nom de la catégorie
+function getCategoryName(category) {
+    const names = {
+        'mocassins': 'Mocassins',
+        'ballerines': 'Ballerines',
+        'mules': 'Mules',
+        'sandales': 'Sandales',
+        'bottes': 'Bottes'
+    };
+    return names[category] || category;
+}
+
+// Obtenir le nom du statut
+function getStatusName(status) {
+    const names = {
+        'active': 'Actif',
+        'coming-soon': 'Coming Soon',
+        'inactive': 'Inactif'
+    };
+    return names[status] || status;
+}
+
+// Filtrer les produits
+function filterProducts() {
+    loadProducts();
+}
+
+// Ouvrir le modal d'ajout/modification
+function openProductModal(productId = null) {
+    const modal = document.getElementById('productModal');
+    const form = document.getElementById('productForm');
+    const title = document.getElementById('modalTitle');
+    
+    form.reset();
+    
+    // Réinitialiser les aperçus d'images
+    for (let i = 1; i <= 3; i++) {
+        document.getElementById(`imagePreview${i}`).innerHTML = '';
+    }
+    
+    // Réinitialiser les pointures (toutes cochées par défaut)
+    ['37', '38', '39', '40', '41'].forEach(size => {
+        document.getElementById(`size${size}`).checked = true;
+    });
+    
+    if (productId) {
+        const product = products.find(p => p.id === productId);
+        if (product) {
+            title.textContent = 'Modifier le produit';
+            document.getElementById('productId').value = product.id;
+            document.getElementById('productName').value = product.name;
+            document.getElementById('productCategory').value = product.category;
+            document.getElementById('productPrice').value = product.price;
+            document.getElementById('productStatus').value = product.status;
+            document.getElementById('productDescription').value = product.description || '';
+            
+            // Charger les images existantes
+            if (product.images && product.images.length > 0) {
+                product.images.forEach((image, index) => {
+                    if (index < 3 && image) {
+                        document.getElementById(`imagePreview${index + 1}`).innerHTML = `
+                            <img src="${image}" alt="Aperçu ${index + 1}" style="max-width: 150px; max-height: 150px; border-radius: 8px;">
+                        `;
+                    }
+                });
+            } else if (product.image) {
+                // Compatibilité avec l'ancien format
+                document.getElementById('imagePreview1').innerHTML = `
+                    <img src="${product.image}" alt="Aperçu 1" style="max-width: 150px; max-height: 150px; border-radius: 8px;">
+                `;
+            }
+            
+            // Charger les pointures
+            if (product.sizes && product.sizes.length > 0) {
+                // Décocher toutes les pointures d'abord
+                ['37', '38', '39', '40', '41'].forEach(size => {
+                    document.getElementById(`size${size}`).checked = false;
+                });
+                // Cocher seulement les pointures disponibles
+                product.sizes.forEach(size => {
+                    const checkbox = document.getElementById(`size${size}`);
+                    if (checkbox) checkbox.checked = true;
+                });
+            }
+        }
+    } else {
+        title.textContent = 'Ajouter un produit';
+        document.getElementById('productId').value = '';
+    }
+    
+    modal.style.display = 'flex';
+}
+
+// Fermer le modal
+function closeProductModal() {
+    document.getElementById('productModal').style.display = 'none';
+}
+
+// Modifier un produit
+function editProduct(id) {
+    openProductModal(id);
+}
+
+// Voir les détails d'un produit
+function viewProduct(id) {
+    const product = products.find(p => p.id === id);
+    if (!product) return;
+    
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.style.display = 'flex';
+    
+    const imagesHtml = product.images && product.images.length > 0 
+        ? product.images.map((img, index) => `
+            <div class="product-detail-image">
+                <img src="${img}" alt="${product.name} - Image ${index + 1}" style="max-width: 200px; max-height: 200px; border-radius: 8px; margin: 5px;">
+            </div>
+        `).join('')
+        : `<div class="product-detail-image">
+            <img src="${product.image || 'images/placeholder.jpg'}" alt="${product.name}" style="max-width: 200px; max-height: 200px; border-radius: 8px;">
+        </div>`;
+    
+    const sizesHtml = product.sizes && product.sizes.length > 0
+        ? product.sizes.map(size => `<span class="size-badge">${size}</span>`).join('')
+        : '<span class="size-badge">37</span><span class="size-badge">38</span><span class="size-badge">39</span><span class="size-badge">40</span><span class="size-badge">41</span>';
+    
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>Détails du produit</h2>
+                <button class="close-btn" onclick="this.closest('.modal').remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="product-details">
+                <div class="product-images-grid">
+                    ${imagesHtml}
+                </div>
+                <div class="product-info-detail">
+                    <h3>${product.name}</h3>
+                    <p><strong>Catégorie:</strong> ${getCategoryName(product.category)}</p>
+                    <p><strong>Prix:</strong> ${product.price} DH</p>
+                    <p><strong>Statut:</strong> <span class="status-badge ${product.status}">${getStatusName(product.status)}</span></p>
+                    <p><strong>Description:</strong> ${product.description || 'Aucune description'}</p>
+                    <div class="product-sizes">
+                        <strong>Pointures disponibles:</strong><br>
+                        ${sizesHtml}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="edit-btn" onclick="editProduct(${product.id}); this.closest('.modal').remove();">
+                    <i class="fas fa-edit"></i> Modifier
+                </button>
+                <button class="cancel-btn" onclick="this.closest('.modal').remove()">Fermer</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Fermer en cliquant à l'extérieur
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+}
+
+// Supprimer un produit
+function deleteProduct(id) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
+        products = products.filter(p => p.id !== id);
+        saveProducts();
+        addActivity(`Produit supprimé (ID: ${id})`);
+    }
+}
+
+// Fonction pour prévisualiser une image
+function previewImage(imageNumber) {
+    const fileInput = document.getElementById(`productImage${imageNumber}`);
+    const preview = document.getElementById(`imagePreview${imageNumber}`);
+    const file = fileInput.files[0];
+    
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.innerHTML = `
+                <img src="${e.target.result}" alt="Aperçu ${imageNumber}" style="max-width: 150px; max-height: 150px; border-radius: 8px;">
+                <button type="button" class="remove-image-btn" onclick="removeImage(${imageNumber})">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.innerHTML = '';
+    }
+}
+
+// Fonction pour supprimer une image
+function removeImage(imageNumber) {
+    document.getElementById(`productImage${imageNumber}`).value = '';
+    document.getElementById(`imagePreview${imageNumber}`).innerHTML = '';
+}
+
+// Gestion du formulaire de produit
+document.getElementById('productForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const productId = document.getElementById('productId').value;
+    
+    // Récupérer les images
+    const images = [];
+    for (let i = 1; i <= 3; i++) {
+        const preview = document.getElementById(`imagePreview${i}`);
+        const img = preview.querySelector('img');
+        if (img) {
+            images.push(img.src);
+        }
+    }
+    
+    // Récupérer les pointures sélectionnées
+    const sizes = [];
+    ['37', '38', '39', '40', '41'].forEach(size => {
+        if (document.getElementById(`size${size}`).checked) {
+            sizes.push(size);
+        }
+    });
+    
+    const productData = {
+        name: document.getElementById('productName').value,
+        category: document.getElementById('productCategory').value,
+        price: parseInt(document.getElementById('productPrice').value),
+        status: document.getElementById('productStatus').value,
+        description: document.getElementById('productDescription').value,
+        images: images,
+        sizes: sizes
+    };
+    
+    // Validation
+    if (images.length === 0) {
+        alert('Veuillez ajouter au moins une image.');
+        return;
+    }
+    
+    if (sizes.length === 0) {
+        alert('Veuillez sélectionner au moins une pointure.');
+        return;
+    }
+    
+    if (productId) {
+        // Modification
+        const index = products.findIndex(p => p.id === parseInt(productId));
+        if (index !== -1) {
+            products[index] = { ...products[index], ...productData };
+            addActivity(`Produit modifié: ${productData.name}`);
+        }
+    } else {
+        // Ajout
+        const newId = Math.max(...products.map(p => p.id), 0) + 1;
+        products.push({ id: newId, ...productData });
+        addActivity(`Nouveau produit ajouté: ${productData.name}`);
+    }
+    
+    saveProducts();
+    updateWebsitePages(); // Mettre à jour automatiquement les pages du site
+    closeProductModal();
+});
+
+// Fonction pour initialiser les produits par défaut lors du premier chargement
+function initializeDefaultProducts() {
+    const existingProducts = localStorage.getItem('bkshoes_products');
+    if (!existingProducts) {
+        console.log('🔄 Initialisation des produits par défaut...');
+        saveProducts();
+        updateWebsitePages();
+        addActivity('Produits par défaut initialisés');
+    }
+}
+
+// Mettre à jour les statistiques du dashboard
+function updateDashboardStats() {
+    document.getElementById('totalProducts').textContent = products.length;
+    document.getElementById('activeProducts').textContent = products.filter(p => p.status === 'active').length;
+    document.getElementById('comingSoonProducts').textContent = products.filter(p => p.status === 'coming-soon').length;
+}
+
+// Mettre à jour les statistiques des catégories
+function updateCategoryStats() {
+    const categories = ['mocassins', 'ballerines', 'mules', 'sandales', 'bottes'];
+    
+    categories.forEach(category => {
+        const count = products.filter(p => p.category === category).length;
+        const element = document.getElementById(`${category}Count`);
+        if (element) {
+            element.textContent = `${count} produit${count !== 1 ? 's' : ''}`;
+        }
+    });
+}
+
+// Ajouter une activité
+function addActivity(message) {
+    const activityList = document.getElementById('activityList');
+    const activityItem = document.createElement('div');
+    activityItem.className = 'activity-item';
+    activityItem.innerHTML = `
+        <i class="fas fa-check-circle"></i>
+        <span>${message}</span>
+        <time>${new Date().toLocaleString('fr-FR')}</time>
+    `;
+    
+    activityList.insertBefore(activityItem, activityList.firstChild);
+    
+    // Garder seulement les 10 dernières activités
+    const items = activityList.querySelectorAll('.activity-item');
+    if (items.length > 10) {
+        items[items.length - 1].remove();
+    }
+}
+
+// Réinitialiser toutes les données
+function clearAllData() {
+    if (confirm('⚠️ ATTENTION !\n\nCette action va supprimer TOUS les produits de TOUTES les catégories.\n\nÊtes-vous absolument sûr de vouloir continuer ?')) {
+        console.log('🗑️ Suppression de tous les produits...');
+        
+        // Vider le localStorage complètement
+        localStorage.removeItem('bkshoes_products');
+        localStorage.removeItem('bkshoes_products_timestamp');
+        localStorage.removeItem('bkshoes_last_sync_check');
+        
+        // Vider les données par catégorie
+        const categories = ['mocassins', 'ballerines', 'mules', 'sandales', 'baskets', 'bottes'];
+        categories.forEach(category => {
+            localStorage.removeItem(`bkshoes_${category}_data`);
+        });
+        
+        // Réinitialiser le tableau des produits
+        products = [];
+        
+        // Sauvegarder l'état vide
+        saveProducts();
+        updateWebsitePages();
+        
+        addActivity('🗑️ TOUS les produits ont été supprimés');
+        
+        console.log('✅ Tous les produits supprimés avec succès');
+        alert('✅ Tous les produits ont été supprimés avec succès !\n\n📄 Les pages du site se mettent à jour automatiquement.\n\nVous pouvez maintenant ajouter vos nouveaux produits.');
+    }
+}
+
+// Fermer le modal en cliquant à l'extérieur
+window.addEventListener('click', function(e) {
+    const modal = document.getElementById('productModal');
+    if (e.target === modal) {
+        closeProductModal();
+    }
+});
+
+// Initialisation
+document.addEventListener('DOMContentLoaded', function() {
+    // Vérifier l'authentification
+    if (!checkAuth()) return;
+    
+    // Afficher l'heure actuelle
+    document.getElementById('currentTime').textContent = new Date().toLocaleString('fr-FR');
+    
+    // Afficher la dernière connexion
+    const lastLogin = document.getElementById('lastLogin');
+    if (lastLogin) {
+        lastLogin.value = new Date().toLocaleString('fr-FR');
+    }
+    
+    // Initialiser les produits par défaut si nécessaire
+    initializeDefaultProducts();
+    
+    // Charger les données
+    loadProducts();
+    updateDashboardStats();
+    updateCategoryStats();
+    
+    // Ajouter l'activité de connexion
+    addActivity('Connexion administrateur');
+    
+    console.log('✅ Administration BkShoes initialisée avec succès');
+});

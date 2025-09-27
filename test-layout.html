@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Layout - 3 Produits par Ligne</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background: #f8f6f3;
+            padding: 2rem 0;
+        }
+        .test-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        .test-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .test-header h1 {
+            color: #8b7355;
+            margin-bottom: 1rem;
+        }
+        .test-header p {
+            color: #a0927d;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1><i class="fas fa-high-heel"></i> Test Layout - 3 Produits par Ligne</h1>
+            <p>Visualisation de la nouvelle structure d'affichage des produits</p>
+        </div>
+        
+        <div class="products-grid">
+            <!-- Produit 1 -->
+            <div class="product-card">
+                <div class="product-image">
+                    <div class="placeholder-image">
+                        <i class="fas fa-shoe-prints"></i>
+                        <p>Mocassins Élégants</p>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <div class="product-details">
+                        <h3>Mocassins Élégants</h3>
+                        <p class="product-description">Mocassins en cuir véritable de qualité supérieure, parfaits pour un look sophistiqué</p>
+                        <div class="price-container">
+                            <span class="price">349 DH</span>
+                        </div>
+                    </div>
+                    <div class="product-actions">
+                        <div class="size-selection">
+                            <span class="sizes-label">Choisir la pointure:</span>
+                            <div class="sizes-grid">
+                                <button class="size-btn" data-size="37">37</button>
+                                <button class="size-btn" data-size="38">38</button>
+                                <button class="size-btn" data-size="39">39</button>
+                                <button class="size-btn" data-size="40">40</button>
+                                <button class="size-btn" data-size="41">41</button>
+                            </div>
+                        </div>
+                        <button class="order-btn" disabled>
+                            <i class="fas fa-shopping-cart"></i> Sélectionner une pointure
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Produit 2 -->
+            <div class="product-card">
+                <div class="product-image">
+                    <div class="placeholder-image">
+                        <i class="fas fa-female"></i>
+                        <p>Ballerines Chic</p>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <div class="product-details">
+                        <h3>Ballerines Chic</h3>
+                        <p class="product-description">Ballerines confortables et élégantes pour toutes les occasions</p>
+                        <div class="price-container">
+                            <span class="price">279 DH</span>
+                        </div>
+                    </div>
+                    <div class="product-actions">
+                        <div class="size-selection">
+                            <span class="sizes-label">Choisir la pointure:</span>
+                            <div class="sizes-grid">
+                                <button class="size-btn" data-size="37">37</button>
+                                <button class="size-btn" data-size="38">38</button>
+                                <button class="size-btn" data-size="39">39</button>
+                                <button class="size-btn" data-size="40">40</button>
+                                <button class="size-btn" data-size="41">41</button>
+                            </div>
+                        </div>
+                        <button class="order-btn" disabled>
+                            <i class="fas fa-shopping-cart"></i> Sélectionner une pointure
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Produit 3 -->
+            <div class="product-card">
+                <div class="product-image">
+                    <div class="placeholder-image">
+                        <i class="fas fa-sun"></i>
+                        <p>Sandales Été</p>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <div class="product-details">
+                        <h3>Sandales Été</h3>
+                        <p class="product-description">Sandales légères et confortables pour les beaux jours</p>
+                        <div class="price-container">
+                            <span class="price">249 DH</span>
+                        </div>
+                    </div>
+                    <div class="product-actions">
+                        <div class="size-selection">
+                            <span class="sizes-label">Choisir la pointure:</span>
+                            <div class="sizes-grid">
+                                <button class="size-btn" data-size="37">37</button>
+                                <button class="size-btn" data-size="38">38</button>
+                                <button class="size-btn" data-size="39">39</button>
+                                <button class="size-btn" data-size="40">40</button>
+                                <button class="size-btn" data-size="41">41</button>
+                            </div>
+                        </div>
+                        <button class="order-btn" disabled>
+                            <i class="fas fa-shopping-cart"></i> Sélectionner une pointure
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Produit 4 -->
+            <div class="product-card">
+                <div class="product-image">
+                    <div class="placeholder-image">
+                        <i class="fas fa-running"></i>
+                        <p>Baskets Tendance</p>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <div class="product-details">
+                        <h3>Baskets Tendance</h3>
+                        <p class="product-description">Baskets modernes et confortables pour un style décontracté</p>
+                        <div class="price-container">
+                            <span class="price">399 DH</span>
+                        </div>
+                    </div>
+                    <div class="product-actions">
+                        <div class="size-selection">
+                            <span class="sizes-label">Choisir la pointure:</span>
+                            <div class="sizes-grid">
+                                <button class="size-btn" data-size="37">37</button>
+                                <button class="size-btn" data-size="38">38</button>
+                                <button class="size-btn" data-size="39">39</button>
+                                <button class="size-btn" data-size="40">40</button>
+                                <button class="size-btn" data-size="41">41</button>
+                            </div>
+                        </div>
+                        <button class="order-btn" disabled>
+                            <i class="fas fa-shopping-cart"></i> Sélectionner une pointure
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Produit 5 -->
+            <div class="product-card">
+                <div class="product-image">
+                    <div class="placeholder-image">
+                        <i class="fas fa-shoe-prints"></i>
+                        <p>Mules Confort</p>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <div class="product-details">
+                        <h3>Mules Confort</h3>
+                        <p class="product-description">Mules élégantes avec talon confortable pour un style raffiné</p>
+                        <div class="price-container">
+                            <span class="price">329 DH</span>
+                        </div>
+                    </div>
+                    <div class="product-actions">
+                        <div class="size-selection">
+                            <span class="sizes-label">Choisir la pointure:</span>
+                            <div class="sizes-grid">
+                                <button class="size-btn" data-size="37">37</button>
+                                <button class="size-btn" data-size="38">38</button>
+                                <button class="size-btn" data-size="39">39</button>
+                                <button class="size-btn" data-size="40">40</button>
+                                <button class="size-btn" data-size="41">41</button>
+                            </div>
+                        </div>
+                        <button class="order-btn" disabled>
+                            <i class="fas fa-shopping-cart"></i> Sélectionner une pointure
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Produit 6 -->
+            <div class="product-card">
+                <div class="product-image">
+                    <div class="placeholder-image">
+                        <i class="fas fa-shoe-prints"></i>
+                        <p>Bottes Élégantes</p>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <div class="product-details">
+                        <h3>Bottes Élégantes</h3>
+                        <p class="product-description">Bottes hautes sophistiquées pour un look raffiné en toute saison</p>
+                        <div class="price-container">
+                            <span class="price">549 DH</span>
+                        </div>
+                    </div>
+                    <div class="product-actions">
+                        <div class="size-selection">
+                            <span class="sizes-label">Choisir la pointure:</span>
+                            <div class="sizes-grid">
+                                <button class="size-btn" data-size="37">37</button>
+                                <button class="size-btn" data-size="38">38</button>
+                                <button class="size-btn" data-size="39">39</button>
+                                <button class="size-btn" data-size="40">40</button>
+                                <button class="size-btn" data-size="41">41</button>
+                            </div>
+                        </div>
+                        <button class="order-btn" disabled>
+                            <i class="fas fa-shopping-cart"></i> Sélectionner une pointure
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 3rem; padding: 2rem; background: white; border-radius: 15px;">
+            <h3 style="color: #d4af37; margin-bottom: 1rem;">✅ Nouveau Layout Implémenté</h3>
+            <p style="color: #8b7355; margin-bottom: 1rem;">
+                <strong>3 produits par ligne</strong> sur desktop • <strong>2 produits par ligne</strong> sur tablette • <strong>1 produit par ligne</strong> sur mobile
+            </p>
+            <p style="color: #a0927d;">
+                Structure améliorée avec cartes plus visibles, images optimisées et sélection de pointures intégrée
+            </p>
+            <div style="margin-top: 2rem;">
+                <a href="admin-login.html" style="background: #d4af37; color: white; padding: 1rem 2rem; text-decoration: none; border-radius: 8px; margin: 0.5rem;">
+                    <i class="fas fa-cog"></i> Administration
+                </a>
+                <a href="status-pages.html" style="background: #007bff; color: white; padding: 1rem 2rem; text-decoration: none; border-radius: 8px; margin: 0.5rem;">
+                    <i class="fas fa-chart-bar"></i> État des Pages
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulation de la sélection des pointures
+        document.querySelectorAll('.size-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const card = this.closest('.product-card');
+                const sizeBtns = card.querySelectorAll('.size-btn');
+                const orderBtn = card.querySelector('.order-btn');
+                
+                // Désélectionner tous les boutons de pointure
+                sizeBtns.forEach(b => b.classList.remove('selected'));
+                
+                // Sélectionner le bouton cliqué
+                this.classList.add('selected');
+                
+                // Activer le bouton de commande
+                orderBtn.disabled = false;
+                orderBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Commander maintenant';
+                orderBtn.style.background = '#d4af37';
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - BkShoes</title>
+    <link rel="stylesheet" href="admin-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="admin-body">
+    <!-- Header Admin -->
+    <header class="admin-header">
+        <div class="admin-nav">
+            <div class="admin-logo">
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <i class="fas fa-high-heel"></i>
+                <span>BkShoes Admin</span>
+            </div>
+            <div class="admin-user">
+                <span class="user-welcome">Bienvenue, Admin</span>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="logout-text">Déconnexion</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Overlay mobile -->
+    <div class="mobile-overlay" onclick="closeMobileMenu()"></div>
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <nav class="admin-menu">
+            <a href="#dashboard" class="menu-item active" onclick="showSection('dashboard')">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Tableau de bord</span>
+            </a>
+            <a href="#products" class="menu-item" onclick="showSection('products')">
+                <i class="fas fa-box"></i>
+                <span>Produits</span>
+            </a>
+            <a href="#categories" class="menu-item" onclick="showSection('categories')">
+                <i class="fas fa-tags"></i>
+                <span>Catégories</span>
+            </a>
+            <a href="#settings" class="menu-item" onclick="showSection('settings')">
+                <i class="fas fa-cog"></i>
+                <span>Paramètres</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="index.html" target="_blank" class="view-site-btn">
+                <i class="fas fa-external-link-alt"></i>
+                Voir le site
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="admin-section active">
+            <div class="section-header">
+                <h1>Tableau de bord</h1>
+                <p>Vue d'ensemble de votre boutique</p>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalProducts">0</h3>
+                        <p>Produits total</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>5</h3>
+                        <p>Catégories</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="activeProducts">0</h3>
+                        <p>Produits actifs</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="comingSoonProducts">0</h3>
+                        <p>Coming Soon</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recent-activity">
+                <h2>Activité récente</h2>
+                <div class="activity-list" id="activityList">
+                    <div class="activity-item">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Système d'administration initialisé</span>
+                        <time id="currentTime"></time>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Products Section -->
+        <section id="products" class="admin-section">
+            <div class="section-header">
+                <h1>Gestion des produits</h1>
+                <button class="add-btn" onclick="openProductModal()">
+                    <i class="fas fa-plus"></i>
+                    Ajouter un produit
+                </button>
+            </div>
+
+            <div class="filters">
+                <select id="categoryFilter" onchange="filterProducts()">
+                    <option value="">Toutes les catégories</option>
+                    <option value="mocassins">Mocassins</option>
+                    <option value="ballerines">Ballerines</option>
+                    <option value="mules">Mules</option>
+                    <option value="sandales">Sandales</option>
+                    <option value="bottes">Bottes</option>
+                </select>
+                <input type="text" id="searchProducts" placeholder="Rechercher un produit..." onkeyup="filterProducts()">
+            </div>
+
+            <div class="products-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Nom</th>
+                            <th>Catégorie</th>
+                            <th>Prix</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productsTableBody">
+                        <!-- Les produits seront ajoutés dynamiquement -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Categories Section -->
+        <section id="categories" class="admin-section">
+            <div class="section-header">
+                <h1>Gestion des catégories</h1>
+            </div>
+            
+            <div class="categories-grid">
+                <div class="category-card">
+                    <h3>Mocassins</h3>
+                    <p>Confort décontracté chic</p>
+                    <div class="category-stats">
+                        <span id="mocassinsCount">0 produits</span>
+                    </div>
+                </div>
+                <div class="category-card">
+                    <h3>Ballerines</h3>
+                    <p>Élégance et féminité</p>
+                    <div class="category-stats">
+                        <span id="ballerinesCount">0 produits</span>
+                    </div>
+                </div>
+                <div class="category-card">
+                    <h3>Mules</h3>
+                    <p>Style décontracté moderne</p>
+                    <div class="category-stats">
+                        <span id="mulesCount">0 produits</span>
+                    </div>
+                </div>
+                <div class="category-card">
+                    <h3>Sandales</h3>
+                    <p>Élégance estivale en cuir authentique</p>
+                    <div class="category-stats">
+                        <span id="sandalesCount">0 produits</span>
+                    </div>
+                </div>
+                <div class="category-card">
+                    <h3>Bottes</h3>
+                    <p>Style et protection pour toutes saisons</p>
+                    <div class="category-stats">
+                        <span id="bottesCount">0 produits</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="settings" class="admin-section">
+            <div class="section-header">
+                <h1>Paramètres</h1>
+            </div>
+            
+            <div class="settings-grid">
+                <div class="setting-card">
+                    <h3>Informations générales</h3>
+                    <div class="setting-item">
+                        <label>Nom de la boutique</label>
+                        <input type="text" value="BkShoes" readonly>
+                    </div>
+                    <div class="setting-item">
+                        <label>Contact WhatsApp</label>
+                        <input type="text" value="+212 6 71 81 82 95" readonly>
+                    </div>
+                </div>
+                
+                <div class="setting-card">
+                    <h3>Sécurité</h3>
+                    <div class="setting-item">
+                        <label>Dernière connexion</label>
+                        <input type="text" id="lastLogin" readonly>
+                    </div>
+                    <div class="setting-item">
+                        <button class="danger-btn" onclick="clearAllData()">
+                            <i class="fas fa-trash"></i>
+                            Supprimer tous les produits
+                        </button>
+                    </div>
+                    <div class="setting-item">
+                        <a href="reset-all.html" class="danger-btn" style="display: inline-block; text-decoration: none; text-align: center;">
+                            <i class="fas fa-broom"></i>
+                            Page de réinitialisation
+                        </a>
+                    </div>
+                    <div class="setting-item">
+                        <a href="status-pages.html" class="add-btn" style="display: inline-block; text-decoration: none; text-align: center; background: #007bff;">
+                            <i class="fas fa-chart-bar"></i>
+                            État des pages
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal pour ajouter/modifier un produit -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Ajouter un produit</h2>
+                <button class="close-btn" onclick="closeProductModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="productForm" class="modal-form">
+                <input type="hidden" id="productId">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="productName">Nom du produit *</label>
+                        <input type="text" id="productName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productCategory">Catégorie *</label>
+                        <select id="productCategory" required>
+                            <option value="">Sélectionner une catégorie</option>
+                            <option value="mocassins">Mocassins</option>
+                            <option value="ballerines">Ballerines</option>
+                            <option value="mules">Mules</option>
+                            <option value="sandales">Sandales</option>
+                            <option value="bottes">Bottes</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="productPrice">Prix (DH) *</label>
+                        <input type="number" id="productPrice" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productStatus">Statut *</label>
+                        <select id="productStatus" required>
+                            <option value="active">Actif</option>
+                            <option value="coming-soon">Coming Soon</option>
+                            <option value="inactive">Inactif</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Images du produit (3 images) *</label>
+                    <div class="images-upload">
+                        <div class="image-upload-item">
+                            <label for="productImage1" class="upload-label">
+                                <i class="fas fa-camera"></i>
+                                Image 1 (Principale)
+                            </label>
+                            <input type="file" id="productImage1" accept="image/*" onchange="previewImage(1)">
+                            <div class="image-preview" id="imagePreview1"></div>
+                        </div>
+                        <div class="image-upload-item">
+                            <label for="productImage2" class="upload-label">
+                                <i class="fas fa-camera"></i>
+                                Image 2 (Côté)
+                            </label>
+                            <input type="file" id="productImage2" accept="image/*" onchange="previewImage(2)">
+                            <div class="image-preview" id="imagePreview2"></div>
+                        </div>
+                        <div class="image-upload-item">
+                            <label for="productImage3" class="upload-label">
+                                <i class="fas fa-camera"></i>
+                                Image 3 (Détail)
+                            </label>
+                            <input type="file" id="productImage3" accept="image/*" onchange="previewImage(3)">
+                            <div class="image-preview" id="imagePreview3"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Pointures disponibles *</label>
+                    <div class="sizes-checkboxes">
+                        <label class="size-checkbox">
+                            <input type="checkbox" id="size37" value="37" checked>
+                            <span>37</span>
+                        </label>
+                        <label class="size-checkbox">
+                            <input type="checkbox" id="size38" value="38" checked>
+                            <span>38</span>
+                        </label>
+                        <label class="size-checkbox">
+                            <input type="checkbox" id="size39" value="39" checked>
+                            <span>39</span>
+                        </label>
+                        <label class="size-checkbox">
+                            <input type="checkbox" id="size40" value="40" checked>
+                            <span>40</span>
+                        </label>
+                        <label class="size-checkbox">
+                            <input type="checkbox" id="size41" value="41" checked>
+                            <span>41</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="productDescription">Description</label>
+                    <textarea id="productDescription" rows="3"></textarea>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="cancel-btn" onclick="closeProductModal()">Annuler</button>
+                    <button type="submit" class="save-btn">
+                        <i class="fas fa-save"></i>
+                        Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

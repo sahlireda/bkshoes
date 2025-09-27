@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>État des Pages - BkShoes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .header h1 {
+            color: #d4af37;
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+        }
+        
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .category-status {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.3s ease;
+            border: 3px solid #e9ecef;
+        }
+        
+        .category-status:hover {
+            transform: translateY(-5px);
+        }
+        
+        .category-status.empty {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+        
+        .category-status.has-products {
+            border-color: #ffc107;
+            background: #fff3cd;
+        }
+        
+        .category-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #d4af37;
+        }
+        
+        .category-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .status-empty {
+            background: #28a745;
+            color: white;
+        }
+        
+        .status-has-products {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .product-count {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .page-link {
+            display: inline-block;
+            background: #d4af37;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            border-radius: 8px;
+            margin: 0.25rem;
+            transition: background 0.3s ease;
+        }
+        
+        .page-link:hover {
+            background: #b8941f;
+        }
+        
+        .actions {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 2px solid #e9ecef;
+        }
+        
+        .action-btn {
+            display: inline-block;
+            background: #007bff;
+            color: white;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            border-radius: 10px;
+            margin: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+        
+        .action-btn.admin {
+            background: #28a745;
+        }
+        
+        .action-btn.admin:hover {
+            background: #1e7e34;
+        }
+        
+        .action-btn.reset {
+            background: #dc3545;
+        }
+        
+        .action-btn.reset:hover {
+            background: #c82333;
+        }
+        
+        .summary {
+            background: #e3f2fd;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .summary h2 {
+            color: #1976d2;
+            margin-bottom: 1rem;
+        }
+        
+        .refresh-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #d4af37;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .refresh-btn:hover {
+            background: #b8941f;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-high-heel"></i> État des Pages BkShoes</h1>
+            <p>Vérification de l'état de toutes les catégories de produits</p>
+        </div>
+        
+        <div class="summary" id="summary">
+            <h2>📊 Résumé</h2>
+            <p id="summaryText">Chargement en cours...</p>
+        </div>
+        
+        <div class="status-grid" id="statusGrid">
+            <!-- Les statuts seront générés dynamiquement -->
+        </div>
+        
+        <div class="actions">
+            <h3>Actions Disponibles</h3>
+            <a href="admin-login.html" class="action-btn admin">
+                <i class="fas fa-cog"></i> Administration
+            </a>
+            <a href="reset-all.html" class="action-btn reset">
+                <i class="fas fa-trash"></i> Réinitialiser Tout
+            </a>
+            <a href="index.html" class="action-btn">
+                <i class="fas fa-home"></i> Retour au Site
+            </a>
+        </div>
+    </div>
+    
+    <button class="refresh-btn" onclick="checkAllPages()" title="Actualiser">
+        <i class="fas fa-sync-alt"></i>
+    </button>
+
+    <script>
+        const categories = [
+            {
+                name: 'Mocassins',
+                page: 'mocassins.html',
+                icon: 'fas fa-shoe-prints',
+                key: 'mocassins'
+            },
+            {
+                name: 'Ballerines',
+                page: 'ballerines.html',
+                icon: 'fas fa-female',
+                key: 'ballerines'
+            },
+            {
+                name: 'Mules',
+                page: 'mules.html',
+                icon: 'fas fa-shoe-prints',
+                key: 'mules'
+            },
+            {
+                name: 'Sandales',
+                page: 'sandales.html',
+                icon: 'fas fa-sun',
+                key: 'sandales'
+            },
+            {
+                name: 'Baskets',
+                page: 'baskets.html',
+                icon: 'fas fa-running',
+                key: 'baskets'
+            },
+            {
+                name: 'Bottes',
+                page: 'bottes.html',
+                icon: 'fas fa-shoe-prints',
+                key: 'bottes'
+            }
+        ];
+        
+        function checkAllPages() {
+            console.log('🔍 Vérification de l\'état de toutes les pages...');
+            
+            const products = JSON.parse(localStorage.getItem('bkshoes_products')) || [];
+            const statusGrid = document.getElementById('statusGrid');
+            
+            let totalProducts = products.length;
+            let emptyCategories = 0;
+            let categoriesWithProducts = 0;
+            
+            statusGrid.innerHTML = '';
+            
+            categories.forEach(category => {
+                const categoryProducts = products.filter(p => p.category === category.key && p.status === 'active');
+                const productCount = categoryProducts.length;
+                
+                if (productCount === 0) {
+                    emptyCategories++;
+                } else {
+                    categoriesWithProducts++;
+                }
+                
+                const statusCard = document.createElement('div');
+                statusCard.className = `category-status ${productCount === 0 ? 'empty' : 'has-products'}`;
+                
+                statusCard.innerHTML = `
+                    <div class="category-icon">
+                        <i class="${category.icon}"></i>
+                    </div>
+                    <div class="category-name">${category.name}</div>
+                    <div class="status-badge ${productCount === 0 ? 'status-empty' : 'status-has-products'}">
+                        ${productCount === 0 ? '✅ VIDE' : `⚠️ ${productCount} produit${productCount > 1 ? 's' : ''}`}
+                    </div>
+                    <div class="product-count">
+                        ${productCount === 0 ? 'Prêt pour vos produits' : `${productCount} produit${productCount > 1 ? 's' : ''} existant${productCount > 1 ? 's' : ''}`}
+                    </div>
+                    <a href="${category.page}" class="page-link" target="_blank">
+                        <i class="fas fa-external-link-alt"></i> Voir la page
+                    </a>
+                `;
+                
+                statusGrid.appendChild(statusCard);
+            });
+            
+            // Mettre à jour le résumé
+            const summaryText = document.getElementById('summaryText');
+            if (totalProducts === 0) {
+                summaryText.innerHTML = `
+                    <strong style="color: #28a745;">✅ SYSTÈME COMPLÈTEMENT VIDE</strong><br>
+                    Toutes les 6 catégories sont vides et prêtes pour vos nouveaux produits !
+                `;
+            } else {
+                summaryText.innerHTML = `
+                    <strong style="color: #ffc107;">📊 ${totalProducts} produit${totalProducts > 1 ? 's' : ''} total</strong><br>
+                    ${emptyCategories} catégorie${emptyCategories > 1 ? 's' : ''} vide${emptyCategories > 1 ? 's' : ''} • 
+                    ${categoriesWithProducts} catégorie${categoriesWithProducts > 1 ? 's' : ''} avec produits
+                `;
+            }
+            
+            console.log(`📊 État: ${totalProducts} produits total, ${emptyCategories} catégories vides`);
+        }
+        
+        // Auto-refresh toutes les 5 secondes
+        setInterval(checkAllPages, 5000);
+        
+        // Vérification initiale
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAllPages();
+            console.log('✅ Page de statut initialisée');
+        });
+        
+        // Écouter les changements dans localStorage
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'bkshoes_products' || e.key === 'bkshoes_update_trigger') {
+                console.log('🔄 Changement détecté, mise à jour du statut...');
+                setTimeout(checkAllPages, 500);
+            }
+        });
+    </script>
+</body>
+</html>

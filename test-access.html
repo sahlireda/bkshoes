@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Accès Discret - BkShoes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            color: #333;
+        }
+        
+        .test-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+        
+        .test-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .test-header h1 {
+            color: #d4af37;
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .test-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 2rem;
+            border-left: 4px solid #d4af37;
+            transition: transform 0.3s ease;
+        }
+        
+        .test-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .test-card h3 {
+            color: #d4af37;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .test-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            margin: 0.5rem 0.5rem 0.5rem 0;
+            transition: all 0.3s ease;
+        }
+        
+        .test-btn:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+        
+        .test-btn.success {
+            background: #28a745;
+        }
+        
+        .test-btn.success:hover {
+            background: #1e7e34;
+        }
+        
+        .test-result {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        .test-result.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .test-result.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .instructions {
+            background: #e3f2fd;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .instructions h3 {
+            color: #1976d2;
+            margin-bottom: 1rem;
+        }
+        
+        .instruction-item {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: white;
+            border-radius: 10px;
+            border-left: 3px solid #1976d2;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        
+        .status-indicator.success {
+            background: #28a745;
+        }
+        
+        .status-indicator.pending {
+            background: #ffc107;
+        }
+        
+        .status-indicator.error {
+            background: #dc3545;
+        }
+        
+        .footer-test {
+            position: relative;
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-top: 2rem;
+            text-align: center;
+        }
+        
+        .invisible-zone {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 15px;
+            height: 15px;
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px dashed #ff0000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .invisible-zone:hover {
+            background: rgba(255, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1><i class="fas fa-vial"></i> Test Accès Discret</h1>
+            <p>Vérification des méthodes d'accès à l'administration BkShoes</p>
+        </div>
+        
+        <div class="instructions">
+            <h3><i class="fas fa-info-circle"></i> Instructions de Test</h3>
+            <div class="instruction-item">
+                <strong>1. Code Secret :</strong> Tapez "admin" sur cette page (pas dans un champ de saisie)
+            </div>
+            <div class="instruction-item">
+                <strong>2. Raccourci Clavier :</strong> Appuyez sur Ctrl + Shift + A
+            </div>
+            <div class="instruction-item">
+                <strong>3. Zone Invisible :</strong> Cliquez sur la zone rouge en bas à droite du footer de test
+            </div>
+            <div class="instruction-item">
+                <strong>4. URL Directe :</strong> Utilisez les boutons de test ci-dessous
+            </div>
+        </div>
+        
+        <div class="test-grid">
+            <!-- Test URL Directe -->
+            <div class="test-card">
+                <h3><i class="fas fa-link"></i> Test URL Directe</h3>
+                <p>Vérification des accès par URL</p>
+                <button class="test-btn" onclick="testUrlAccess('/admin')">
+                    Tester /admin
+                </button>
+                <button class="test-btn" onclick="testUrlAccess('?admin=true')">
+                    Tester ?admin=true
+                </button>
+                <button class="test-btn" onclick="testUrlAccess('#admin')">
+                    Tester #admin
+                </button>
+                <div class="test-result" id="url-result"></div>
+            </div>
+            
+            <!-- Test Code Secret -->
+            <div class="test-card">
+                <h3><i class="fas fa-keyboard"></i> Test Code Secret</h3>
+                <p>Statut de la détection du code "admin"</p>
+                <div id="secret-status">
+                    <span class="status-indicator pending"></span>
+                    En attente... Tapez "admin"
+                </div>
+                <button class="test-btn" onclick="simulateSecretCode()">
+                    Simuler Code Secret
+                </button>
+                <div class="test-result" id="secret-result"></div>
+            </div>
+            
+            <!-- Test Raccourci -->
+            <div class="test-card">
+                <h3><i class="fas fa-keyboard"></i> Test Raccourci</h3>
+                <p>Vérification Ctrl + Shift + A</p>
+                <div id="shortcut-status">
+                    <span class="status-indicator pending"></span>
+                    En attente... Appuyez sur Ctrl+Shift+A
+                </div>
+                <button class="test-btn" onclick="simulateShortcut()">
+                    Simuler Raccourci
+                </button>
+                <div class="test-result" id="shortcut-result"></div>
+            </div>
+            
+            <!-- Test Scripts -->
+            <div class="test-card">
+                <h3><i class="fas fa-code"></i> Test Scripts</h3>
+                <p>Vérification des scripts chargés</p>
+                <button class="test-btn" onclick="checkScripts()">
+                    Vérifier Scripts
+                </button>
+                <button class="test-btn success" onclick="openConsole()">
+                    Ouvrir Console
+                </button>
+                <div class="test-result" id="scripts-result"></div>
+            </div>
+        </div>
+        
+        <div class="footer-test">
+            <h4>Zone de Test Footer</h4>
+            <p>Cliquez sur la zone rouge en bas à droite pour tester l'accès invisible</p>
+            <div class="invisible-zone" onclick="testInvisibleZone()" title="Zone d'accès invisible"></div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 2rem;">
+            <button class="test-btn success" onclick="window.location.href='admin'">
+                <i class="fas fa-sign-in-alt"></i> Accéder à l'Administration
+            </button>
+            <button class="test-btn" onclick="window.location.href='index.html'">
+                <i class="fas fa-home"></i> Retour au Site
+            </button>
+        </div>
+    </div>
+
+    <script src="admin-router.js"></script>
+    <script>
+        let testResults = {
+            secretCode: false,
+            shortcut: false,
+            invisibleZone: false,
+            scripts: false
+        };
+        
+        // Test URL Access
+        function testUrlAccess(path) {
+            const result = document.getElementById('url-result');
+            result.style.display = 'block';
+            result.className = 'test-result success';
+            result.innerHTML = `
+                <i class="fas fa-check"></i> Test URL: ${path}<br>
+                <small>Redirection vers: ${window.location.origin}${path}</small>
+            `;
+            
+            setTimeout(() => {
+                window.location.href = path;
+            }, 1500);
+        }
+        
+        // Simuler le code secret
+        function simulateSecretCode() {
+            const result = document.getElementById('secret-result');
+            const status = document.getElementById('secret-status');
+            
+            // Simuler la séquence de touches
+            const event = new KeyboardEvent('keydown', { key: 'n' });
+            document.dispatchEvent(event);
+            
+            result.style.display = 'block';
+            result.className = 'test-result success';
+            result.innerHTML = '<i class="fas fa-check"></i> Code secret simulé avec succès';
+            
+            status.innerHTML = '<span class="status-indicator success"></span>Code détecté !';
+            testResults.secretCode = true;
+        }
+        
+        // Simuler le raccourci
+        function simulateShortcut() {
+            const result = document.getElementById('shortcut-result');
+            const status = document.getElementById('shortcut-status');
+            
+            result.style.display = 'block';
+            result.className = 'test-result success';
+            result.innerHTML = '<i class="fas fa-check"></i> Raccourci clavier simulé';
+            
+            status.innerHTML = '<span class="status-indicator success"></span>Raccourci détecté !';
+            testResults.shortcut = true;
+        }
+        
+        // Test zone invisible
+        function testInvisibleZone() {
+            const result = document.createElement('div');
+            result.className = 'test-result success';
+            result.style.display = 'block';
+            result.innerHTML = '<i class="fas fa-check"></i> Zone invisible cliquée avec succès !';
+            
+            document.querySelector('.footer-test').appendChild(result);
+            testResults.invisibleZone = true;
+            
+            setTimeout(() => {
+                alert('🎯 Zone invisible fonctionnelle !\nRedirection vers l\'administration...');
+                window.location.href = 'admin';
+            }, 1000);
+        }
+        
+        // Vérifier les scripts
+        function checkScripts() {
+            const result = document.getElementById('scripts-result');
+            result.style.display = 'block';
+            
+            const scripts = [
+                'admin-router.js',
+                'admin-sync.js (sur pages catégories)',
+                'size-selection.js (sur pages catégories)'
+            ];
+            
+            let scriptsLoaded = 0;
+            if (typeof handleAdminRouting === 'function') scriptsLoaded++;
+            if (typeof setupSecretAccess === 'function') scriptsLoaded++;
+            if (typeof hideAdminElements === 'function') scriptsLoaded++;
+            
+            if (scriptsLoaded >= 2) {
+                result.className = 'test-result success';
+                result.innerHTML = `
+                    <i class="fas fa-check"></i> Scripts chargés: ${scriptsLoaded}/3<br>
+                    <small>Fonctions détectées: handleAdminRouting, setupSecretAccess, hideAdminElements</small>
+                `;
+                testResults.scripts = true;
+            } else {
+                result.className = 'test-result error';
+                result.innerHTML = `
+                    <i class="fas fa-times"></i> Scripts manquants: ${3-scriptsLoaded}/3<br>
+                    <small>Vérifiez que admin-router.js est bien chargé</small>
+                `;
+            }
+        }
+        
+        // Ouvrir la console
+        function openConsole() {
+            console.log('🧪 Test Accès Discret BkShoes');
+            console.log('📊 Résultats des tests:', testResults);
+            console.log('🔧 Fonctions disponibles:');
+            console.log('   - handleAdminRouting()');
+            console.log('   - setupSecretAccess()');
+            console.log('   - hideAdminElements()');
+            console.log('   - showSecretAccessPrompt()');
+            
+            alert('📱 Console ouverte ! Vérifiez les outils de développement (F12)');
+        }
+        
+        // Écouter les événements de test
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+                const status = document.getElementById('shortcut-status');
+                status.innerHTML = '<span class="status-indicator success"></span>Raccourci détecté !';
+                testResults.shortcut = true;
+            }
+        });
+        
+        // Détecter le code secret
+        let keySequence = [];
+        document.addEventListener('keydown', function(e) {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            
+            keySequence.push(e.key.toLowerCase());
+            if (keySequence.length > 5) keySequence = keySequence.slice(-5);
+            
+            if (keySequence.join('').includes('admin')) {
+                const status = document.getElementById('secret-status');
+                status.innerHTML = '<span class="status-indicator success"></span>Code secret détecté !';
+                testResults.secretCode = true;
+            }
+        });
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🧪 Page de test des accès discrets chargée');
+            
+            // Vérifier automatiquement les scripts
+            setTimeout(() => {
+                checkScripts();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

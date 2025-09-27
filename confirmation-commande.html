@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation de Commande - BkShoes</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <h1>
+                        <a href="index.html">
+                            <img src="bk-logo.png" alt="BkShoes" class="logo-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                            <span class="logo-fallback" style="display: none;"><i class="fas fa-high-heel"></i> BkShoes</span>
+                        </a>
+                    </h1>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Accueil</a></li>
+                    <li><a href="mocassins.html" class="nav-link">Mocassins</a></li>
+                    <li><a href="ballerines.html" class="nav-link">Ballerines</a></li>
+                    <li><a href="mules.html" class="nav-link">Mules</a></li>
+                    <li><a href="sandales.html" class="nav-link">Sandales</a></li>
+                    <li><a href="baskets.html" class="nav-link">Baskets</a></li>
+                    <li><a href="bottes.html" class="nav-link">Bottes</a></li>
+                    <li><a href="index.html#contact" class="nav-link">Contact</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb-list">
+                    <li><a href="index.html"><i class="fas fa-home"></i> Accueil</a></li>
+                    <li><a href="#" id="category-breadcrumb">Catégorie</a></li>
+                    <li class="active">Confirmation de commande</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Order Confirmation Section -->
+    <section class="order-confirmation-section">
+        <div class="container">
+            <div class="confirmation-header">
+                <div class="confirmation-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <h1>Confirmation de votre commande</h1>
+                <p class="confirmation-subtitle">Vérifiez les détails de votre sélection avant de finaliser</p>
+            </div>
+
+            <div class="order-details-card">
+                <div class="product-summary">
+                    <div class="product-image-container">
+                        <img id="selected-product-image" src="" alt="Produit sélectionné" class="selected-product-img">
+                        <div id="selected-product-placeholder" class="placeholder-image">
+                            <i class="fas fa-shoe-prints"></i>
+                            <p>Produit sélectionné</p>
+                        </div>
+                    </div>
+                    
+                    <div class="product-info-summary">
+                        <h2 id="selected-product-name">Nom du produit</h2>
+                        <p id="selected-product-description" class="product-description">Description du produit</p>
+                        
+                        <div class="selection-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Pointure sélectionnée:</span>
+                                <span id="selected-size" class="detail-value">--</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Prix:</span>
+                                <span id="selected-price" class="detail-value price">-- DH</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Catégorie:</span>
+                                <span id="selected-category" class="detail-value">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-actions">
+                    <div class="action-buttons">
+                        <button class="btn-secondary" onclick="goBack()">
+                            <i class="fas fa-arrow-left"></i>
+                            Retour à la sélection
+                        </button>
+                        
+                        <button class="btn-primary" onclick="proceedToWhatsApp()" id="whatsapp-btn">
+                            <i class="fab fa-whatsapp"></i>
+                            Finaliser sur WhatsApp
+                        </button>
+                    </div>
+                    
+                    <div class="order-info">
+                        <div class="info-item">
+                            <i class="fas fa-shipping-fast"></i>
+                            <span>Livraison gratuite partout au Maroc</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-undo"></i>
+                            <span>Échange gratuit sous 7 jours</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-certificate"></i>
+                            <span>Cuir authentique du Maroc</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Information Form -->
+            <div class="customer-info-card">
+                <h3>Informations de contact (optionnel)</h3>
+                <p class="form-subtitle">Ces informations nous aideront à mieux vous servir sur WhatsApp</p>
+                
+                <form id="customer-form" class="customer-form">
+                    <div class="form-group">
+                        <label for="customer-name">Nom complet</label>
+                        <input type="text" id="customer-name" name="name" placeholder="Votre nom complet">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="customer-city">Ville</label>
+                        <select id="customer-city" name="city">
+                            <option value="">Sélectionnez votre ville</option>
+                            <option value="Casablanca">Casablanca</option>
+                            <option value="Rabat">Rabat</option>
+                            <option value="Fès">Fès</option>
+                            <option value="Marrakech">Marrakech</option>
+                            <option value="Agadir">Agadir</option>
+                            <option value="Tanger">Tanger</option>
+                            <option value="Meknès">Meknès</option>
+                            <option value="Oujda">Oujda</option>
+                            <option value="Kenitra">Kenitra</option>
+                            <option value="Tétouan">Tétouan</option>
+                            <option value="Autre">Autre ville</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="customer-notes">Notes spéciales (optionnel)</label>
+                        <textarea id="customer-notes" name="notes" placeholder="Toute information supplémentaire..." rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-high-heel"></i> BkShoes</h3>
+                    <p>Votre boutique de chaussures féminines de qualité</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Catégories</h4>
+                    <ul>
+                        <li><a href="mocassins.html">Mocassins</a></li>
+                        <li><a href="ballerines.html">Ballerines</a></li>
+                        <li><a href="mules.html">Mules</a></li>
+                        <li><a href="sandales.html">Sandales</a></li>
+                        <li><a href="baskets.html">Baskets</a></li>
+                        <li><a href="bottes.html">Bottes</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p><i class="fab fa-whatsapp"></i> +212 6 71 81 82 95</p>
+                    <p><i class="fas fa-envelope"></i> contact@bkshoes.ma</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 BkShoes. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="size-selection.js"></script>
+    <script>
+        // Load order details from URL parameters or localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            loadOrderDetails();
+        });
+
+        function loadOrderDetails() {
+            console.log('📄 Chargement des détails de commande...');
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderData = {
+                name: urlParams.get('name') || localStorage.getItem('selectedProductName'),
+                price: urlParams.get('price') || localStorage.getItem('selectedProductPrice'),
+                size: urlParams.get('size') || localStorage.getItem('selectedProductSize'),
+                category: urlParams.get('category') || localStorage.getItem('selectedProductCategory'),
+                image: urlParams.get('image') || localStorage.getItem('selectedProductImage'),
+                description: urlParams.get('description') || localStorage.getItem('selectedProductDescription')
+            };
+
+            console.log('📦 Données récupérées:', orderData);
+            console.log('💾 localStorage contents:');
+            console.log('   - selectedProductName:', localStorage.getItem('selectedProductName'));
+            console.log('   - selectedProductPrice:', localStorage.getItem('selectedProductPrice'));
+            console.log('   - selectedProductSize:', localStorage.getItem('selectedProductSize'));
+            console.log('   - selectedProductCategory:', localStorage.getItem('selectedProductCategory'));
+
+            if (orderData.name && orderData.name !== 'null') {
+                console.log('✅ Données valides trouvées, mise à jour de l\'interface...');
+                
+                document.getElementById('selected-product-name').textContent = orderData.name;
+                document.getElementById('selected-price').textContent = orderData.price || 'Prix non défini';
+                document.getElementById('selected-size').textContent = orderData.size || 'Pointure non définie';
+                document.getElementById('selected-category').textContent = orderData.category || 'Chaussures';
+                document.getElementById('selected-product-description').textContent = orderData.description || 'Chaussures en cuir véritable';
+                
+                // Update breadcrumb
+                if (orderData.category) {
+                    document.getElementById('category-breadcrumb').textContent = orderData.category;
+                    document.getElementById('category-breadcrumb').href = orderData.category.toLowerCase() + '.html';
+                }
+                
+                // Handle product image
+                if (orderData.image && orderData.image !== 'null' && orderData.image !== '') {
+                    document.getElementById('selected-product-image').src = orderData.image;
+                    document.getElementById('selected-product-image').style.display = 'block';
+                    document.getElementById('selected-product-placeholder').style.display = 'none';
+                    console.log('🖼️ Image produit affichée:', orderData.image);
+                } else {
+                    document.getElementById('selected-product-image').style.display = 'none';
+                    document.getElementById('selected-product-placeholder').style.display = 'flex';
+                    console.log('🖼️ Placeholder image utilisé');
+                }
+                
+                console.log('✅ Interface mise à jour avec succès');
+            } else {
+                console.warn('⚠️ Aucune donnée de commande trouvée');
+                alert('Aucune donnée de commande trouvée. Veuillez retourner à la sélection de produit.');
+            }
+        }
+
+        function goBack() {
+            const category = localStorage.getItem('selectedProductCategory');
+            if (category) {
+                window.location.href = category.toLowerCase() + '.html';
+            } else {
+                window.history.back();
+            }
+        }
+
+        function proceedToWhatsApp() {
+            console.log('📱 Préparation du message WhatsApp...');
+            
+            const productName = document.getElementById('selected-product-name').textContent;
+            const productPrice = document.getElementById('selected-price').textContent;
+            const productSize = document.getElementById('selected-size').textContent;
+            const customerName = document.getElementById('customer-name').value;
+            const customerCity = document.getElementById('customer-city').value;
+            const customerNotes = document.getElementById('customer-notes').value;
+
+            console.log('📦 Données pour WhatsApp:');
+            console.log('   - Produit:', productName);
+            console.log('   - Prix:', productPrice);
+            console.log('   - Pointure:', productSize);
+            console.log('   - Client:', customerName);
+            console.log('   - Ville:', customerCity);
+
+            let message = `🛍️ *Nouvelle Commande BkShoes*\n\n`;
+            message += `👠 *Produit:* ${productName}\n`;
+            message += `💰 *Prix:* ${productPrice}\n`;
+            message += `👟 *Pointure:* ${productSize}\n\n`;
+            
+            if (customerName) {
+                message += `👤 *Nom:* ${customerName}\n`;
+            }
+            if (customerCity) {
+                message += `🏙️ *Ville:* ${customerCity}\n`;
+            }
+            if (customerNotes) {
+                message += `📝 *Notes:* ${customerNotes}\n`;
+            }
+            
+            message += `\n✨ Merci de me confirmer la disponibilité et les détails de livraison.`;
+
+            console.log('📝 Message généré:', message);
+
+            const phoneNumber = "212671818295"; // WhatsApp number
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+            
+            console.log('🔗 URL WhatsApp:', whatsappUrl);
+            
+            // Clear stored data
+            localStorage.removeItem('selectedProductName');
+            localStorage.removeItem('selectedProductPrice');
+            localStorage.removeItem('selectedProductSize');
+            localStorage.removeItem('selectedProductCategory');
+            localStorage.removeItem('selectedProductImage');
+            localStorage.removeItem('selectedProductDescription');
+            
+            console.log('🗑️ Données localStorage nettoyées');
+            console.log('🚀 Ouverture de WhatsApp...');
+            
+            // Essayer d'ouvrir WhatsApp
+            try {
+                window.open(whatsappUrl, '_blank');
+                console.log('✅ WhatsApp ouvert avec succès');
+            } catch (error) {
+                console.error('❌ Erreur lors de l\'ouverture de WhatsApp:', error);
+                alert('Erreur lors de l\'ouverture de WhatsApp. Veuillez copier le lien manuellement.');
+            }
+        }
+    </script>
+</body>
+</html>

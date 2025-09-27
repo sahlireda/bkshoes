@@ -1,0 +1,15 @@
+# Netlify redirects file
+
+# Redirect old URLs to new ones
+/home /
+/accueil /
+
+# Handle SPA routing (if needed in the future)
+/* /index.html 200
+
+# Redirect to HTTPS (handled by Netlify by default, but can be explicit)
+http://bkshoes.netlify.app/* https://bkshoes.netlify.app/:splat 301!
+
+# Custom domain redirects (update with your actual domain when you have one)
+# http://www.yourdomain.com/* https://yourdomain.com/:splat 301!
+# https://www.yourdomain.com/* https://yourdomain.com/:splat 301!

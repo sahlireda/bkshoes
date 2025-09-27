@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accès Administration - BkShoes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .access-container {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        .access-header {
+            margin-bottom: 2rem;
+        }
+        
+        .access-header h1 {
+            color: #d4af37;
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+        }
+        
+        .access-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .access-options {
+            display: grid;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .access-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+        
+        .access-btn:hover {
+            background: #d4af37;
+            border-color: #d4af37;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+        }
+        
+        .access-btn.admin {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border-color: #28a745;
+            color: white;
+        }
+        
+        .access-btn.admin:hover {
+            background: linear-gradient(135deg, #1e7e34 0%, #17a2b8 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(40, 167, 69, 0.4);
+        }
+        
+        .access-btn.tools {
+            background: linear-gradient(135deg, #007bff 0%, #6610f2 100%);
+            border-color: #007bff;
+            color: white;
+        }
+        
+        .access-btn.tools:hover {
+            background: linear-gradient(135deg, #0056b3 0%, #520dc2 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 123, 255, 0.4);
+        }
+        
+        .access-btn i {
+            font-size: 1.5rem;
+        }
+        
+        .back-link {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .back-link a {
+            color: #666;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+        
+        .back-link a:hover {
+            color: #d4af37;
+        }
+        
+        .security-notice {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 2rem 0;
+            color: #856404;
+            font-size: 0.9rem;
+        }
+        
+        .hidden-features {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-left: 4px solid #d4af37;
+        }
+        
+        .hidden-features h3 {
+            color: #d4af37;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .feature-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: left;
+            border: 1px solid #e9ecef;
+        }
+        
+        .feature-item h4 {
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .feature-item p {
+            color: #666;
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="access-container">
+        <div class="access-header">
+            <h1><i class="fas fa-shield-alt"></i> Accès Administration</h1>
+            <p>Zone d'accès sécurisée pour la gestion du site BkShoes</p>
+        </div>
+        
+        <div class="security-notice">
+            <i class="fas fa-info-circle"></i>
+            <strong>Accès Restreint :</strong> Cette zone est réservée aux administrateurs autorisés uniquement.
+        </div>
+        
+        <div class="access-options">
+            <a href="admin-login.html" class="access-btn admin">
+                <i class="fas fa-cog"></i>
+                <div>
+                    <div>Administration Principale</div>
+                    <small style="opacity: 0.8;">Gestion des produits et paramètres</small>
+                </div>
+            </a>
+            
+            <a href="status-pages.html" class="access-btn tools">
+                <i class="fas fa-chart-bar"></i>
+                <div>
+                    <div>État des Pages</div>
+                    <small style="opacity: 0.8;">Monitoring et statistiques</small>
+                </div>
+            </a>
+            
+            <a href="reset-all.html" class="access-btn" style="background: #dc3545; border-color: #dc3545; color: white;">
+                <i class="fas fa-broom"></i>
+                <div>
+                    <div>Réinitialisation</div>
+                    <small style="opacity: 0.8;">Vider tous les produits</small>
+                </div>
+            </a>
+        </div>
+        
+        <div class="hidden-features">
+            <h3><i class="fas fa-eye-slash"></i> Éléments Masqués</h3>
+            <p style="color: #666; margin-bottom: 1rem; font-size: 0.9rem;">
+                Les éléments suivants ont été masqués du site public pour une expérience utilisateur optimisée :
+            </p>
+            
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <h4><i class="fas fa-female"></i> Ballerines</h4>
+                    <p>Catégorie masquée du menu principal</p>
+                    <a href="ballerines.html" style="color: #d4af37; font-size: 0.8rem; text-decoration: none;">
+                        → Accès direct
+                    </a>
+                </div>
+                
+                <div class="feature-item">
+                    <h4><i class="fas fa-tools"></i> Outils Debug</h4>
+                    <p>Scripts de développement et synchronisation</p>
+                    <a href="test-layout.html" style="color: #d4af37; font-size: 0.8rem; text-decoration: none;">
+                        → Test Layout
+                    </a>
+                </div>
+                
+                <div class="feature-item">
+                    <h4><i class="fas fa-sync-alt"></i> Synchronisation</h4>
+                    <p>Outils de mise à jour automatique</p>
+                    <a href="javascript:void(0)" onclick="forceSync()" style="color: #d4af37; font-size: 0.8rem; text-decoration: none;">
+                        → Forcer Sync
+                    </a>
+                </div>
+                
+                <div class="feature-item">
+                    <h4><i class="fas fa-code"></i> Scripts Admin</h4>
+                    <p>Utilitaires de gestion avancée</p>
+                    <div style="margin-top: 0.5rem;">
+                        <button onclick="openConsole()" style="background: #007bff; color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">
+                            Console
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="back-link">
+            <a href="index.html">
+                <i class="fas fa-arrow-left"></i> Retour au site principal
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Fonction pour forcer la synchronisation
+        function forceSync() {
+            if (typeof forceUpdateAllPages === 'function') {
+                forceUpdateAllPages();
+            } else {
+                // Déclencher manuellement la synchronisation
+                localStorage.setItem('bkshoes_update_trigger', Date.now());
+                localStorage.setItem('bkshoes_products_timestamp', Date.now());
+                alert('🔄 Synchronisation forcée déclenchée !');
+            }
+        }
+        
+        // Fonction pour ouvrir la console de développement
+        function openConsole() {
+            console.log('🔧 Console d\'administration BkShoes');
+            console.log('📊 Produits actuels:', JSON.parse(localStorage.getItem('bkshoes_products')) || []);
+            console.log('⏰ Dernière mise à jour:', localStorage.getItem('bkshoes_products_timestamp'));
+            console.log('💡 Commandes disponibles:');
+            console.log('   - forceSync() : Force la synchronisation');
+            console.log('   - clearAllProducts() : Vide tous les produits');
+            console.log('   - checkCurrentState() : Vérifie l\'état actuel');
+            
+            alert('📱 Console ouverte ! Vérifiez les outils de développement (F12)');
+        }
+        
+        // Vérification de sécurité basique
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔐 Accès administration BkShoes');
+            console.log('⚠️  Zone sécurisée - Accès restreint aux administrateurs');
+            
+            // Log de l'accès (pour audit)
+            const accessLog = {
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent,
+                url: window.location.href
+            };
+            console.log('📝 Log d\'accès:', accessLog);
+        });
+        
+        // Raccourci clavier pour accès rapide (Ctrl+Shift+A)
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+                window.location.href = 'admin-login.html';
+            }
+        });
+    </script>
+</body>
+</html>

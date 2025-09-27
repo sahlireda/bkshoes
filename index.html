@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BkShoes - Chaussures Féminines Élégantes</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Loader Professionnel -->
+    <div id="pageLoader" class="page-loader">
+        <div class="loader-content">
+            <div class="loader-logo">
+                <img src="bk-logo.png" alt="BkShoes" class="loader-logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="loader-logo-fallback" style="display: none;">
+                    <i class="fas fa-high-heel"></i>
+                    <span>BkShoes</span>
+                </div>
+            </div>
+            <div class="loader-animation">
+                <div class="loader-dots">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>
+            <p class="loader-text">Chargement de votre boutique...</p>
+            <button class="skip-loader" onclick="document.getElementById('pageLoader').classList.add('hidden'); document.body.style.overflow='visible';">
+                Passer <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <h1>
+                        <img src="bk-logo.png" alt="BkShoes" class="logo-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                        <span class="logo-fallback" style="display: none;"><i class="fas fa-high-heel"></i> BkShoes</span>
+                    </h1>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="#accueil" class="nav-link">Accueil</a></li>
+                    <li><a href="mocassins.html" class="nav-link">Mocassins</a></li>
+                    <li><a href="ballerines.html" class="nav-link">Ballerines</a></li>
+                    <li><a href="mules.html" class="nav-link">Mules</a></li>
+                    <li><a href="sandales.html" class="nav-link">Sandales</a></li>
+                    <li><a href="baskets.html" class="nav-link">Baskets</a></li>
+                    <li><a href="bottes.html" class="nav-link">Bottes</a></li>
+                    <li><a href="#contact" class="nav-link">Contact</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="accueil" class="hero">
+        <div class="hero-background">
+            <div class="hero-particles"></div>
+            <div class="hero-gradient"></div>
+        </div>
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-certificate"></i>
+                <span>Matériau Authentique du Maroc</span>
+            </div>
+            <h1 class="hero-title">
+                <span class="title-line">
+                    <img src="bk-logo.png" alt="BkShoes" class="hero-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                    <span class="hero-logo-fallback" style="display: none;">BkShoes</span>
+                </span>
+                <span class="title-accent">Collection Premium</span>
+            </h1>
+            <p class="hero-subtitle">Chaussures féminines élégantes</p>
+            <p class="hero-description">Des créations artisanales uniques, où confort et raffinement se rencontrent pour révéler toute votre élégance.</p>
+            <div class="hero-actions">
+                <a href="mocassins.html" class="cta-button primary">
+                    <i class="fas fa-shoe-prints"></i>
+                    <span>Découvrir la Collection</span>
+                    <div class="button-shine"></div>
+                </a>
+                <a href="#contact" class="cta-button secondary">
+                    <i class="fab fa-whatsapp"></i>
+                    <span>Nous Contacter</span>
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number">100%</span>
+                    <span class="stat-label">Daim Véritable</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">+500</span>
+                    <span class="stat-label">Clientes Satisfaites</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">24h</span>
+                    <span class="stat-label">Livraison Express</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-scroll-indicator">
+            <div class="scroll-arrow">
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mocassins Section -->
+    <section id="mocassins" class="category-section">
+        <div class="container">
+            <h2 class="section-title">Mocassins</h2>
+            <p class="section-subtitle">Confort décontracté chic</p>
+            
+            <!-- Image de catégorie cliquable -->
+            <div class="category-hero">
+                <a href="mocassins.html" class="category-link">
+                    <div class="category-image-container">
+                        <img src="image home/Mocassins femme.jpeg" 
+                             alt="Collection Mocassins" 
+                             class="category-hero-img">
+                        <div class="category-overlay">
+                            <div class="category-overlay-content">
+                                <i class="fas fa-eye"></i>
+                                <span>Découvrir la collection</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ballerines Section -->
+    <section id="ballerines" class="category-section">
+        <div class="container">
+            <h2 class="section-title">Ballerines</h2>
+            <p class="section-subtitle">Élégance et féminité</p>
+            
+            <!-- Image de catégorie cliquable -->
+            <div class="category-hero">
+                <a href="ballerines.html" class="category-link">
+                    <div class="category-image-container">
+                        <img src="image home/Ballerines.jpg" 
+                             alt="Collection Ballerines" 
+                             class="category-hero-img">
+                        <div class="category-overlay">
+                            <div class="category-overlay-content">
+                                <i class="fas fa-eye"></i>
+                                <span>Découvrir la collection</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mules Section -->
+    <section id="mules" class="category-section">
+        <div class="container">
+            <h2 class="section-title">Mules</h2>
+            <p class="section-subtitle">Style décontracté moderne</p>
+            
+            <!-- Image de catégorie cliquable -->
+            <div class="category-hero">
+                <a href="mules.html" class="category-link">
+                    <div class="category-image-container">
+                        <img src="image home/Mules.jpg" 
+                             alt="Collection Mules" 
+                             class="category-hero-img">
+                        <div class="category-overlay">
+                            <div class="category-overlay-content">
+                                <i class="fas fa-eye"></i>
+                                <span>Découvrir la collection</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sandales Section -->
+    <section id="sandales" class="category-section">
+        <div class="container">
+            <h2 class="section-title">Sandales</h2>
+            <p class="section-subtitle">Élégance estivale en Daim authentique</p>
+            
+            <!-- Image de catégorie cliquable -->
+            <div class="category-hero">
+                <a href="sandales.html" class="category-link">
+                    <div class="category-image-container">
+                        <img src="image home/Sandales.jpg" 
+                             alt="Collection Sandales" 
+                             class="category-hero-img">
+                        <div class="category-overlay">
+                            <div class="category-overlay-content">
+                                <i class="fas fa-eye"></i>
+                                <span>Découvrir la collection</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Baskets Section -->
+    <section id="baskets" class="category-section">
+        <div class="container">
+            <h2 class="section-title">Baskets</h2>
+            <p class="section-subtitle">Confort sportif et style urbain</p>
+            
+            <!-- Image de catégorie cliquable -->
+            <div class="category-hero">
+                <a href="baskets.html" class="category-link">
+                    <div class="category-image-container">
+                        <img src="image home/Baskets.jpg" 
+                             alt="Collection Baskets" 
+                             class="category-hero-img">
+                        <div class="category-overlay">
+                            <div class="category-overlay-content">
+                                <i class="fas fa-eye"></i>
+                                <span>Découvrir la collection</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bottes Section -->
+    <section id="bottes" class="category-section">
+        <div class="container">
+            <h2 class="section-title">Bottes</h2>
+            <p class="section-subtitle">Style et protection pour toutes saisons</p>
+            
+            <!-- Image de catégorie cliquable -->
+            <div class="category-hero">
+                <a href="bottes.html" class="category-link">
+                    <div class="category-image-container">
+                        <img src="image home/Bottes.jpg" 
+                             alt="Collection Bottes" 
+                             class="category-hero-img">
+                        <div class="category-overlay">
+                            <div class="category-overlay-content">
+                                <i class="fas fa-eye"></i>
+                                <span>Découvrir la collection</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Qualité -->
+    <section class="quality-section">
+        <div class="container">
+            <div class="quality-content">
+                <div class="quality-text">
+                    <h2>Notre Engagement Qualité</h2>
+                    <p>Tous nos produits sont fabriqués en <strong>Daim Véritable</strong> dans les ateliers traditionnels de Fès. Chaque paire de chaussures et accessoires est confectionnée avec passion par nos artisans les plus expérimentés.</p>
+                    <div class="quality-features">
+                        <div class="feature">
+                            <i class="fas fa-certificate"></i>
+                            <span>Matériau Authentique du Maroc</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-hand-holding-heart"></i>
+                            <span>Confection artisanale</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-shipping-fast"></i>
+                            <span>Livraison gratuite</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="quality-image">
+                    <img src="image home/artisanat fes.jpg" alt="Artisanat de Fès" class="quality-img">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Réseaux Sociaux -->
+    <section class="social-section">
+        <div class="container">
+            <h2 class="section-title">Suivez-nous</h2>
+            <p class="section-subtitle">Restez connectés pour découvrir nos dernières créations</p>
+            <div class="social-links">
+                <a href="#" class="social-link facebook" target="_blank" rel="noopener">
+                    <i class="fab fa-facebook-f"></i>
+                    <span>Facebook</span>
+                </a>
+                <a href="#" class="social-link instagram" target="_blank" rel="noopener">
+                    <i class="fab fa-instagram"></i>
+                    <span>Instagram</span>
+                </a>
+                <a href="#" class="social-link tiktok" target="_blank" rel="noopener">
+                    <i class="fab fa-tiktok"></i>
+                    <span>TikTok</span>
+                </a>
+            </div>
+            <div class="social-cta">
+                <p>Découvrez nos coulisses, nos nouveautés et l'artisanat marocain authentique</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Contact -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <h2 class="section-title">Contactez-nous</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fab fa-whatsapp"></i>
+                        <div>
+                            <h3>WhatsApp</h3>
+                            <p>+212 6 71 81 82 95</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h3>Email</h3>
+                            <p>contact@bkshoes.ma</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h3>Adresse</h3>
+                            <p>Fès, Maroc</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-high-heel"></i> BkShoes</h3>
+                    <p>Votre boutique de chaussures féminines de qualité</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Catégories</h4>
+                    <ul>
+                        <li><a href="mocassins.html">Mocassins</a></li>
+                        <li><a href="ballerines.html">Ballerines</a></li>
+                        <li><a href="mules.html">Mules</a></li>
+                        <li><a href="sandales.html">Sandales</a></li>
+                        <li><a href="baskets.html">Baskets</a></li>
+                        <li><a href="bottes.html">Bottes</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p><i class="fab fa-whatsapp"></i> +212 6 71 81 82 95</p>
+                    <p><i class="fas fa-envelope"></i> contact@bkshoes.ma</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Suivez-nous</h4>
+                    <div class="footer-social">
+                        <a href="#" class="footer-social-link" target="_blank">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="footer-social-link" target="_blank">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="footer-social-link" target="_blank">
+                            <i class="fab fa-tiktok"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 BkShoes. Tous droits réservés.</p>
+                <!-- Liens d'administration masqués -->
+                <!-- 
+                <div class="footer-admin-links">
+                    <a href="admin-login.html" class="admin-link">
+                        <i class="fas fa-cog"></i>
+                        Administration
+                    </a>
+                    <button onclick="forceSyncProducts()" class="sync-btn" title="Forcer la synchronisation">
+                        <i class="fas fa-sync-alt"></i>
+                        Sync
+                    </button>
+                    <button onclick="debugProducts()" class="debug-btn" title="Debug produits">
+                        <i class="fas fa-bug"></i>
+                        Debug
+                    </button>
+                    <button onclick="testBallerines()" class="test-btn" title="Test Ballerines">
+                        <i class="fas fa-shoe-prints"></i>
+                        Ballerines
+                    </button>
+                </div>
+                -->
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="admin-router.js"></script>
+</body>
+</html>

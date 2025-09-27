@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réinitialisation BkShoes</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            color: white;
+        }
+        .reset-container {
+            background: white;
+            color: #333;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 500px;
+        }
+        .reset-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin: 1rem;
+            transition: background 0.3s ease;
+        }
+        .reset-btn:hover {
+            background: #ff3742;
+        }
+        .success {
+            background: #2ed573;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: none;
+        }
+        .admin-link {
+            display: inline-block;
+            background: #d4af37;
+            color: white;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="reset-container">
+        <h1>🗑️ Réinitialisation BkShoes</h1>
+        <p>Cette page vous permet de supprimer tous les produits existants et de repartir avec un système propre.</p>
+        
+        <div class="success" id="successMessage">
+            ✅ Tous les produits ont été supprimés avec succès !<br>
+            Le système est maintenant prêt pour vos nouveaux produits.
+        </div>
+        
+        <button class="reset-btn" onclick="resetAllProducts()">
+            🗑️ Supprimer TOUS les produits
+        </button>
+        
+        <p><small>Cette action est irréversible !</small></p>
+        
+        <a href="admin-login.html" class="admin-link">
+            🔐 Aller à l'Administration
+        </a>
+        
+        <a href="index.html" class="admin-link" style="background: #3742fa;">
+            🏠 Retour au Site
+        </a>
+    </div>
+
+    <script>
+        function resetAllProducts() {
+            if (confirm('⚠️ ATTENTION !\n\nCette action va supprimer TOUS les produits de TOUTES les catégories.\n\nÊtes-vous absolument sûr de vouloir continuer ?')) {
+                console.log('🗑️ Réinitialisation complète du système...');
+                
+                // Supprimer tous les produits du localStorage
+                localStorage.removeItem('bkshoes_products');
+                localStorage.removeItem('bkshoes_products_timestamp');
+                localStorage.removeItem('bkshoes_last_sync_check');
+                
+                // Supprimer les données par catégorie
+                const categories = ['mocassins', 'ballerines', 'mules', 'sandales', 'baskets', 'bottes'];
+                categories.forEach(category => {
+                    localStorage.removeItem(`bkshoes_${category}_data`);
+                });
+                
+                // Réinitialiser avec un tableau vide
+                localStorage.setItem('bkshoes_products', JSON.stringify([]));
+                localStorage.setItem('bkshoes_products_timestamp', Date.now());
+                localStorage.setItem('bkshoes_update_trigger', Date.now());
+                
+                console.log('✅ Système réinitialisé avec succès');
+                
+                // Afficher le message de succès
+                document.getElementById('successMessage').style.display = 'block';
+                
+                // Masquer le bouton
+                document.querySelector('.reset-btn').style.display = 'none';
+                
+                console.log('📄 Toutes les pages vont se mettre à jour automatiquement');
+                
+                // Rediriger vers l'administration après 3 secondes
+                setTimeout(() => {
+                    if (confirm('✅ Réinitialisation terminée !\n\nVoulez-vous aller à l\'administration pour ajouter vos produits ?')) {
+                        window.location.href = 'admin-login.html';
+                    }
+                }, 2000);
+            }
+        }
+        
+        // Vérifier l'état actuel
+        document.addEventListener('DOMContentLoaded', function() {
+            const products = JSON.parse(localStorage.getItem('bkshoes_products')) || [];
+            console.log(`📊 Produits actuels: ${products.length}`);
+            
+            if (products.length === 0) {
+                document.querySelector('p').innerHTML = 'Le système est déjà vide. Vous pouvez commencer à ajouter vos produits via l\'administration.';
+                document.querySelector('.reset-btn').textContent = '✅ Système déjà vide';
+                document.querySelector('.reset-btn').disabled = true;
+                document.querySelector('.reset-btn').style.background = '#95a5a6';
+            }
+        });
+    </script>
+</body>
+</html>
