@@ -21,7 +21,27 @@ function syncProductsFromAdmin() {
     console.log(`📦 ${categoryProducts.length} produits trouvés pour ${currentPage}`);
     
     if (categoryProducts.length > 0) {
+        const productsGrid = document.querySelector('#products-grid') || document.querySelector('.products-grid');
+        if (productsGrid) {
+            productsGrid.classList.remove('empty-state');
+        }
         updatePageProducts(categoryProducts);
+    } else {
+        // Afficher l'état vide Coming Soon sur la page courante
+        const productsGrid = document.querySelector('#products-grid') || document.querySelector('.products-grid');
+        if (productsGrid) {
+            productsGrid.classList.add('empty-state');
+            productsGrid.innerHTML = `
+                <div class="coming-soon-empty">
+                    <div class="cs-badge">Bientôt disponible</div>
+                    <div class="cs-dots" aria-hidden="true">
+                        <span class="cs-dot"></span>
+                        <span class="cs-dot"></span>
+                        <span class="cs-dot"></span>
+                    </div>
+                </div>
+            `;
+        }
     }
 }
 

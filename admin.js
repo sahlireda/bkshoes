@@ -11,6 +11,51 @@ function checkAuth() {
     return true;
 }
 
+// Afficher un toast de succès/erreur
+function showToast(message, type = 'success') {
+    let container = document.getElementById('toastContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        container.style.position = 'fixed';
+        container.style.top = '20px';
+        container.style.right = '20px';
+        container.style.zIndex = '9999';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = 'admin-toast';
+    toast.textContent = message;
+    toast.style.background = type === 'success' ? '#28a745' : '#dc3545';
+    toast.style.color = '#fff';
+    toast.style.padding = '10px 14px';
+    toast.style.borderRadius = '8px';
+    toast.style.boxShadow = '0 6px 16px rgba(0,0,0,0.15)';
+    toast.style.marginBottom = '10px';
+    toast.style.fontFamily = "Poppins, sans-serif";
+    toast.style.fontSize = '14px';
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateY(0)';
+    toast.style.transition = 'opacity .4s ease, transform .4s ease';
+
+    container.appendChild(toast);
+
+    // Disparition progressive
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-6px)';
+    }, 2500);
+
+    // Suppression
+    setTimeout(() => {
+        toast.remove();
+        if (container.childElementCount === 0) {
+            container.remove();
+        }
+    }, 3200);
+}
+
 // Déconnexion
 function logout() {
     sessionStorage.removeItem('adminLoggedIn');
@@ -457,6 +502,10 @@ document.getElementById('productForm').addEventListener('submit', function(e) {
     saveProducts();
     updateWebsitePages(); // Mettre à jour automatiquement les pages du site
     closeProductModal();
+    // Rediriger l'UI vers la section Produits et afficher un toast de succès
+    showSection('products');
+    loadProducts();
+    showToast('Produit enregistré avec succès', 'success');
 });
 
 // Fonction pour initialiser les produits par défaut lors du premier chargement

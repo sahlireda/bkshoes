@@ -22,6 +22,10 @@
                     </h1>
                 </div>
                 <ul class="nav-menu">
+                    <div class="mobile-menu-header">
+                        <h3>Navigation</h3>
+                        <p>Découvrez nos collections</p>
+                    </div>
                     <li><a href="index.html" class="nav-link">Accueil</a></li>
                     <li><a href="mocassins.html" class="nav-link active">Mocassins</a></li>
                     <li><a href="ballerines.html" class="nav-link">Ballerines</a></li>
@@ -39,6 +43,9 @@
             </div>
         </nav>
     </header>
+
+    <!-- Overlay pour menu mobile -->
+    <div class="nav-overlay"></div>
 
     <!-- Breadcrumb -->
     <div class="breadcrumb">
@@ -84,10 +91,11 @@
     </section>
 
     <!-- Footer -->
-    <footer>
+    <footer class="footer">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
+                    <h3><i class="fas fa-high-heel"></i> BkShoes</h3>
                     <p>Votre boutique de chaussures féminines de qualité</p>
                 </div>
                 <div class="footer-section">
@@ -106,6 +114,20 @@
                     <p><i class="fab fa-whatsapp"></i> +212 6 71 81 82 95</p>
                     <p><i class="fas fa-envelope"></i> contact@bkshoes.ma</p>
                 </div>
+                <div class="footer-section">
+                    <h4>Suivez-nous</h4>
+                    <div class="footer-social">
+                        <a href="#" class="footer-social-link" target="_blank">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="footer-social-link" target="_blank">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="footer-social-link" target="_blank">
+                            <i class="fab fa-tiktok"></i>
+                        </a>
+                    </div>
+                </div>
             </div>
             <div class="footer-bottom">
                 <p>&copy; 2024 BkShoes. Tous droits réservés.</p>
@@ -113,6 +135,8 @@
         </div>
     </footer>
 
+    <script src="script.js"></script>
+    <script src="mobile-menu.js"></script>
     <script src="size-selection.js"></script>
     <script src="admin-sync.js"></script>
     <script src="admin-router.js"></script>

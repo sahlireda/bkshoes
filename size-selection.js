@@ -235,8 +235,45 @@ function selectProductAndSize(button) {
         }
     }
     
+    // Collecter toutes les images du produit
+    const productImages = [];
+    
+    // Ajouter l'image principale
+    if (productData.image) {
+        productImages.push(productData.image);
+    }
+    
+    // Chercher d'autres images dans la carte produit
+    const allImages = productCard.querySelectorAll('img');
+    allImages.forEach(img => {
+        if (img.src && !img.src.includes('placeholder') && !productImages.includes(img.src)) {
+            productImages.push(img.src);
+        }
+    });
+    
+    // Si pas d'images trouvées, utiliser des images par défaut
+    if (productImages.length === 0) {
+        const defaultImages = getDefaultImagesForCategory(productData.category);
+        productImages.push(...defaultImages);
+    }
+    
+    console.log('🖼️ Images collectées:', productImages);
+    
     // Stocker les données dans localStorage
     try {
+        const selectedProduct = {
+            name: productData.name,
+            price: productData.price,
+            size: productData.size,
+            category: productData.category,
+            image: productData.image,
+            images: productImages,
+            description: productData.description
+        };
+        
+        localStorage.setItem('selectedProduct', JSON.stringify(selectedProduct));
+        
+        // Garder aussi l'ancien format pour compatibilité
         localStorage.setItem('selectedProductName', productData.name);
         localStorage.setItem('selectedProductPrice', productData.price);
         localStorage.setItem('selectedProductSize', productData.size);
@@ -609,6 +646,62 @@ function updatePageComplete() {
     setTimeout(() => {
         addImageGalleriesToAll();
     }, 1000);
+}
+
+// Fonction pour obtenir les images par défaut selon la catégorie
+function getDefaultImagesForCategory(category) {
+    // Utiliser des data URLs avec des SVG générés pour éviter les erreurs réseau
+    const defaultImages = {
+        'mocassins': [
+            generatePlaceholderImage('Mocassin 1', '#8b7355'),
+            generatePlaceholderImage('Mocassin 2', '#a0927d'),
+            generatePlaceholderImage('Mocassin 3', '#8b7355')
+        ],
+        'ballerines': [
+            generatePlaceholderImage('Ballerine 1', '#d4af37'),
+            generatePlaceholderImage('Ballerine 2', '#f4d03f'),
+            generatePlaceholderImage('Ballerine 3', '#d4af37')
+        ],
+        'mules': [
+            generatePlaceholderImage('Mule 1', '#2c3e50'),
+            generatePlaceholderImage('Mule 2', '#34495e'),
+            generatePlaceholderImage('Mule 3', '#2c3e50')
+        ],
+        'sandales': [
+            generatePlaceholderImage('Sandale 1', '#e67e22'),
+            generatePlaceholderImage('Sandale 2', '#f39c12'),
+            generatePlaceholderImage('Sandale 3', '#e67e22')
+        ],
+        'baskets': [
+            generatePlaceholderImage('Basket 1', '#3498db'),
+            generatePlaceholderImage('Basket 2', '#5dade2'),
+            generatePlaceholderImage('Basket 3', '#3498db')
+        ],
+        'bottes': [
+            generatePlaceholderImage('Botte 1', '#8e44ad'),
+            generatePlaceholderImage('Botte 2', '#a569bd'),
+            generatePlaceholderImage('Botte 3', '#8e44ad')
+        ]
+    };
+    
+    return defaultImages[category] || defaultImages['mocassins'];
+}
+
+// Fonction pour générer une image placeholder en SVG
+function generatePlaceholderImage(text, backgroundColor) {
+    const svg = `
+        <svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+            <rect width="400" height="300" fill="${backgroundColor}"/>
+            <text x="200" y="130" font-family="Arial, sans-serif" font-size="18" font-weight="bold" 
+                  fill="white" text-anchor="middle" dominant-baseline="middle">${text}</text>
+            <text x="200" y="160" font-family="Arial, sans-serif" font-size="14" 
+                  fill="rgba(255,255,255,0.8)" text-anchor="middle" dominant-baseline="middle">BkShoes Collection</text>
+            <circle cx="200" cy="200" r="30" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+            <path d="M185 200 L195 210 L215 190" stroke="rgba(255,255,255,0.6)" stroke-width="3" fill="none"/>
+        </svg>
+    `;
+    
+    return `data:image/svg+xml;base64,${btoa(svg)}`;
 }
 
 // Rendre ces fonctions accessibles globalement

@@ -157,28 +157,74 @@ function animateNumber(element) {
         element.textContent = displayNumber;
     }, 30);
 }
-
 // Navigation mobile
 document.addEventListener('DOMContentLoaded', function() {
     const hamburger = document.querySelector('.hamburger');
     const navMenu = document.querySelector('.nav-menu');
     const navLinks = document.querySelectorAll('.nav-link');
+    const navOverlay = document.querySelector('.nav-overlay');
+
+    if (!hamburger || !navMenu) {
+        console.log('Elements hamburger ou nav-menu non trouvés');
+        return;
+    }
+
+    // Fonction pour fermer le menu
+    function closeMenu() {
+        hamburger.classList.remove('active');
+        navMenu.classList.remove('active');
+        if (navOverlay) {
+            navOverlay.classList.remove('active');
+        }
+        document.body.style.overflow = 'visible';
+    }
+
+    // Fonction pour ouvrir le menu
+    function openMenu() {
+        hamburger.classList.add('active');
+        navMenu.classList.add('active');
+        if (navOverlay) {
+            navOverlay.classList.add('active');
+        }
+        document.body.style.overflow = 'hidden';
+    }
 
     // Toggle menu mobile
-    hamburger.addEventListener('click', function() {
-        hamburger.classList.toggle('active');
-        navMenu.classList.toggle('active');
+    hamburger.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (navMenu.classList.contains('active')) {
+            closeMenu();
+        } else {
+            openMenu();
+        }
     });
+
+    // Fermer le menu quand on clique sur l'overlay
+    if (navOverlay) {
+        navOverlay.addEventListener('click', closeMenu);
+    }
 
     // Fermer le menu quand on clique sur un lien
     navLinks.forEach(link => {
         link.addEventListener('click', function() {
-            hamburger.classList.remove('active');
-            navMenu.classList.remove('active');
+            closeMenu();
         });
     });
 
-    // Smooth scrolling pour les liens de navigation
+    // Fermer le menu avec la touche Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && navMenu.classList.contains('active')) {
+            closeMenu();
+        }
+    });
+});
+
+// Smooth scrolling pour les liens de navigation (pour la page d'accueil)
+document.addEventListener('DOMContentLoaded', function() {
+    const navLinks = document.querySelectorAll('.nav-link[href^="#"]');
+    
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
@@ -186,7 +232,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const targetSection = document.querySelector(targetId);
             
             if (targetSection) {
-                const offsetTop = targetSection.offsetTop - 80; // Ajuster pour le header fixe
+                const offsetTop = targetSection.offsetTop - 80;
                 window.scrollTo({
                     top: offsetTop,
                     behavior: 'smooth'
@@ -597,11 +643,26 @@ function updateCategoryPage(category, products) {
     // Cette fonction fonctionne sur les pages individuelles de catégories
     const productsGrid = document.getElementById('products-grid');
     if (!productsGrid) return; // Pas sur une page de catégorie
+
+    // Ne mettre à jour que si la page actuelle correspond à la catégorie ciblée
+    const path = (window.location && window.location.pathname) ? window.location.pathname.toLowerCase() : '';
+    const currentCategory =
+        path.includes('mocassins.html') ? 'mocassins' :
+        path.includes('ballerines.html') ? 'ballerines' :
+        path.includes('mules.html') ? 'mules' :
+        path.includes('sandales.html') ? 'sandales' :
+        path.includes('baskets.html') ? 'baskets' :
+        path.includes('bottes.html') ? 'bottes' : '';
+
+    if (currentCategory && currentCategory !== category) {
+        return; // Cette mise à jour ne concerne pas la page courante
+    }
     
     console.log(`🔄 Mise à jour de la page ${category} avec ${products.length} produits`);
     
     if (products.length > 0) {
         productsGrid.innerHTML = '';
+        productsGrid.classList.remove('empty-state');
         
         products.forEach(product => {
             const productCard = createProductCard(product);
@@ -623,11 +684,15 @@ function updateCategoryPage(category, products) {
         
         console.log(`✅ ${products.length} produits ajoutés à la page ${category}`);
     } else {
+        productsGrid.classList.add('empty-state');
         productsGrid.innerHTML = `
-            <div class="no-products-message">
-                <i class="fas fa-shoe-prints"></i>
-                <h3>Aucun produit disponible</h3>
-                <p>Cette catégorie sera bientôt mise à jour avec de nouveaux produits.</p>
+            <div class="coming-soon-empty">
+                <div class="cs-badge">Bientôt disponible</div>
+                <div class="cs-dots" aria-hidden="true">
+                    <span class="cs-dot"></span>
+                    <span class="cs-dot"></span>
+                    <span class="cs-dot"></span>
+                </div>
             </div>
         `;
         console.log(`ℹ️ Aucun produit actif pour la catégorie ${category}`);
@@ -671,7 +736,7 @@ function createProductCard(product) {
         <div class="product-info">
             <h3>${product.name}</h3>
             <p class="price">${product.price} DH</p>
-            <button class="order-btn" onclick="${hasDetailPage ? 'event.stopPropagation(); ' : ''}orderWhatsApp('${product.name}', '${product.price} DH')">
+            <button class="order-btn" onclick="${hasDetailPage ? 'event.stopPropagation(); ' : ''}selectProductAndSize(this)">
                 <i class="fab fa-whatsapp"></i> Commander
             </button>
         </div>
