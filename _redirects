@@ -4,8 +4,9 @@
 /home /
 /accueil /
 
-# Handle SPA routing (if needed in the future)
-/* /index.html 200
+# Handle SPA routing (disabled for static .html pages)
+# If you build a SPA later, uncomment the next line
+# /* /index.html 200
 
 # Redirect to HTTPS (handled by Netlify by default, but can be explicit)
 http://bkshoes.netlify.app/* https://bkshoes.netlify.app/:splat 301!

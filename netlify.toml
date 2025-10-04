@@ -52,11 +52,12 @@
   to = "/"
   status = 301
 
-# 404 page
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+# Supprimer la règle SPA globale: nous servons des pages statiques .html
+# (Si vous activez une SPA plus tard, réactivez cette règle.)
+# [[redirects]]
+#   from = "/*"
+#   to = "/index.html"
+#   status = 200
 
 # Form handling (for future contact forms)
 [build.processing]
@@ -71,7 +72,8 @@
   minify = true
 
 [build.processing.html]
-  pretty_urls = true
+  # Conserver les extensions .html visibles
+  pretty_urls = false
 
 # Environment variables (if needed)
 [context.production.environment]
