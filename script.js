@@ -534,6 +534,37 @@ function initTooltips() {
 // Initialiser les tooltips au chargement de la page
 document.addEventListener('DOMContentLoaded', initTooltips);
 
+// Normaliser les liens internes pour forcer l'extension .html
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        const pages = new Set(['index','mocassins','ballerines','mules','sandales','baskets','bottes']);
+        const links = document.querySelectorAll('a[href]');
+
+        links.forEach(a => {
+            const raw = (a.getAttribute('href') || '').trim();
+            if (!raw) return;
+
+            // Ignorer anchors, chemins absolus ou protocoles spéciaux
+            if (/^(https?:|mailto:|tel:|javascript:|#|\/)/i.test(raw)) return;
+
+            // Déjà une page .html (avec ou sans query/hash)
+            if (/\.html($|[?#])/i.test(raw)) return;
+
+            // Correspond aux pages internes connues sans extension
+            const match = raw.match(/^([a-z0-9-_]+)([?#].*)?$/i);
+            if (!match) return;
+
+            const base = match[1].toLowerCase();
+            const suffix = match[2] || '';
+            if (pages.has(base)) {
+                a.setAttribute('href', `${base}.html${suffix}`);
+            }
+        });
+    } catch (e) {
+        console.warn('Normalisation des liens échouée:', e);
+    }
+});
+
 // ===== SYNCHRONISATION AVEC L'ADMINISTRATION =====
 
 // Fonction pour charger les produits depuis l'administration
