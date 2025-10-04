@@ -39,6 +39,15 @@ if (document.readyState === 'loading') {
         // Pages internes connues
         var pages = new Set(['index','mocassins','ballerines','mules','sandales','baskets','bottes']);
 
+        // Cas spécial: racine "/" -> forcer /index.html
+        if (path === '') {
+            var home = window.location.origin + '/index.html' + (window.location.search || '') + (window.location.hash || '');
+            if (window.location.href !== home) {
+                window.location.replace(home);
+                return;
+            }
+        }
+
         // Si l'URL est exactement une page connue SANS extension, rediriger vers .html
         if (pages.has(path)) {
             var target = window.location.origin + '/' + path + '.html' + (window.location.search || '') + (window.location.hash || '');
