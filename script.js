@@ -30,6 +30,27 @@ if (document.readyState === 'loading') {
     document.body.style.overflow = 'hidden';
 }
 
+// Canonical: forcer les URLs avec .html si la page est servie via un chemin sans extension (Netlify clean URLs)
+(function enforceHtmlCanonicalUrl(){
+    try {
+        var rawPath = (window.location && window.location.pathname) ? window.location.pathname : '/';
+        // Supprimer les slashes de début/fin
+        var path = rawPath.replace(/^\/+|\/+$/g, '').toLowerCase();
+        // Pages internes connues
+        var pages = new Set(['index','mocassins','ballerines','mules','sandales','baskets','bottes']);
+
+        // Si l'URL est exactement une page connue SANS extension, rediriger vers .html
+        if (pages.has(path)) {
+            var target = window.location.origin + '/' + path + '.html' + (window.location.search || '') + (window.location.hash || '');
+            if (window.location.href !== target) {
+                window.location.replace(target);
+            }
+        }
+    } catch (e) {
+        console.warn('Canonical .html redirect skipped:', e);
+    }
+})();
+
 // ===== ANIMATIONS D'ENTRÉE SOPHISTIQUÉES =====
 function initEntranceAnimations() {
     // Animation des éléments avec intersection observer
