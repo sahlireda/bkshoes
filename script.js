@@ -41,7 +41,121 @@ document.addEventListener('DOMContentLoaded', function() {
     } catch (e) {
         console.warn('Cache-busting CSS ignoré:', e);
     }
+
+    // 1) Import automatique depuis un lien partageable (?p= ou ?pl=)
+    try {
+        importProductsFromLink();
+    } catch (e) {
+        console.warn('Import de produits via lien ignoré:', e);
+    }
 });
+
+// =====================
+// Partage sans backend
+// =====================
+function base64UrlDecode(input) {
+    try {
+        // Remplacer URL-safe chars et compléter le padding
+        input = input.replace(/-/g, '+').replace(/_/g, '/');
+        const pad = input.length % 4;
+        if (pad) input += '='.repeat(4 - pad);
+        return atob(input);
+    } catch (e) {
+        console.warn('Base64Url decode error:', e);
+        return null;
+    }
+}
+
+function safeJsonParse(str) {
+    try { return JSON.parse(str); } catch { return null; }
+}
+
+function normalizeProduct(p) {
+    if (!p || typeof p !== 'object') return null;
+    const copy = { ...p };
+    // Normalisations basiques
+    copy.category = (copy.category || '').toLowerCase();
+    copy.status = copy.status || 'active';
+    if (!Array.isArray(copy.images)) {
+        if (copy.image) copy.images = [copy.image]; else copy.images = [];
+    }
+    return copy;
+}
+
+function mergeProductsIntoLocal(products) {
+    const KEY = 'bkshoes_products';
+    const existing = safeJsonParse(localStorage.getItem(KEY)) || [];
+    const byKey = new Map();
+    const makeKey = (p) => `${(p.category||'').trim()}__${(p.name||'').trim()}`;
+
+    // Index existants
+    existing.forEach(p => {
+        byKey.set(makeKey(p), p);
+    });
+
+    // Fusion: remplacer si même (catégorie + nom), sinon ajouter
+    products.forEach(p => {
+        const norm = normalizeProduct(p);
+        if (!norm || !norm.name || !norm.category) return;
+        byKey.set(makeKey(norm), { ...byKey.get(makeKey(norm)), ...norm });
+    });
+
+    const merged = Array.from(byKey.values());
+    localStorage.setItem(KEY, JSON.stringify(merged));
+    localStorage.setItem('bkshoes_products_timestamp', Date.now().toString());
+    localStorage.setItem('bkshoes_update_trigger', Math.random().toString(36).slice(2));
+    console.log(`✅ ${products.length} produit(s) importé(s) via lien. Total: ${merged.length}`);
+}
+
+function importProductsFromLink() {
+    const params = new URLSearchParams(location.search);
+    const single = params.get('p'); // produit unique encodé base64url(JSON)
+    const list = params.get('pl');  // liste de produits encodée base64url(JSON array)
+
+    if (!single && !list) return; // rien à faire
+
+    let imported = [];
+    if (single) {
+        const decoded = base64UrlDecode(single);
+        const obj = safeJsonParse(decoded || '');
+        if (obj) imported.push(obj);
+    }
+    if (list) {
+        const decoded = base64UrlDecode(list);
+        const arr = safeJsonParse(decoded || '');
+        if (Array.isArray(arr)) imported = imported.concat(arr);
+    }
+
+    if (imported.length) {
+        mergeProductsIntoLocal(imported);
+        // Nettoyer l'URL pour éviter les ré-imports
+        const cleanUrl = location.origin + location.pathname + location.hash;
+        if (history && history.replaceState) history.replaceState({}, document.title, cleanUrl);
+    } else {
+        console.warn('Aucun produit valide trouvé dans les paramètres du lien');
+    }
+}
+
+// Helpers pour générer des liens partageables depuis la console
+function base64UrlEncode(str) {
+    const b64 = btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+    return b64;
+}
+
+function generateShareLinkForProduct(product) {
+    const payload = base64UrlEncode(JSON.stringify(product || {}));
+    return location.origin + location.pathname + `?p=${payload}`;
+}
+
+function generateShareLinkForProducts(products) {
+    const payload = base64UrlEncode(JSON.stringify(products || []));
+    return location.origin + location.pathname + `?pl=${payload}`;
+}
+
+window.ShareBK = {
+    generateShareLinkForProduct,
+    generateShareLinkForProducts
+};
 
 // Forcer l'affichage des produits en 1 colonne et centrés (toutes pages)
 document.addEventListener('DOMContentLoaded', function() {
