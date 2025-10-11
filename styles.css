@@ -917,7 +917,7 @@ body {
     line-height: 1.6;
 }
 
-/* Grille de produits - 3 par ligne */
+/* Grille de produits - 3 par ligne (desktop), responsive plus bas */
 .products-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -1024,6 +1024,11 @@ body {
     margin-bottom: 0.2rem;
     line-height: 1.2;
     font-style: italic;
+}
+
+/* Listings: masquer la description dans les grilles de produits */
+.products-grid .product-description {
+    display: none;
 }
 
 .price-container {
@@ -1539,12 +1544,15 @@ body {
         gap: 1.2rem;
         padding: 0 1rem;
         max-width: 100%;
+        justify-items: center; /* centrer les cartes dans la grille */
     }
     
     .product-card {
         min-height: 280px;
         margin-bottom: 1rem;
         border-radius: 12px;
+        width: 100%;
+        max-width: 380px; /* largeur lisible centrée sur mobile */
     }
     
     .product-card:hover {
@@ -1626,13 +1634,16 @@ body {
 /* Responsive pour tablettes */
 @media (max-width: 1024px) {
     .products-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr; /* forcer 1 produit par ligne sur tablette aussi */
         gap: 1.5rem;
         max-width: 800px;
+        justify-items: center; /* centrer les cartes */
     }
     
     .product-card {
         min-height: 340px;
+        width: 100%;
+        max-width: 480px; /* cohérent avec desktop */
     }
 }
 

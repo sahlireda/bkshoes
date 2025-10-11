@@ -22,6 +22,42 @@ window.addEventListener('load', function() {
     setTimeout(hideLoader, 800);
 });
 
+// Forcer l'affichage des produits en 1 colonne et centrés (toutes pages)
+document.addEventListener('DOMContentLoaded', function() {
+    function applyOnePerRow() {
+        try {
+            const isMobile = window.matchMedia('(max-width: 768px)').matches;
+            document.querySelectorAll('.products-grid').forEach(grid => {
+                grid.style.display = 'grid';
+                if (isMobile) {
+                    grid.style.gridTemplateColumns = '1fr';
+                    grid.style.justifyItems = 'center';
+                } else {
+                    // Laisser le CSS gérer le layout desktop (3 colonnes)
+                    grid.style.gridTemplateColumns = '';
+                    grid.style.justifyItems = '';
+                }
+            });
+        } catch (e) {
+            console.warn('applyOnePerRow failed:', e);
+        }
+    }
+
+    // Initial application
+    applyOnePerRow();
+
+    // Observer pour ré-appliquer quand le contenu est injecté/chargé
+    try {
+        const observer = new MutationObserver(() => applyOnePerRow());
+        observer.observe(document.body, { childList: true, subtree: true });
+    } catch (e) {
+        console.warn('MutationObserver not available:', e);
+    }
+
+    // Recalculer au redimensionnement (passage mobile/desktop)
+    window.addEventListener('resize', applyOnePerRow);
+});
+
 // Fallback : masquer le loader après 3 secondes même si la page n'est pas complètement chargée
 setTimeout(hideLoader, 3000);
 
