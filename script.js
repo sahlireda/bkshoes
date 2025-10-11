@@ -22,6 +22,27 @@ window.addEventListener('load', function() {
     setTimeout(hideLoader, 800);
 });
 
+// Cache-busting pour styles.css en production (Netlify)
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        const ASSET_VERSION = '2025-10-11-1';
+        const links = Array.from(document.querySelectorAll('link[rel="stylesheet"]'));
+        links.forEach(link => {
+            const href = link.getAttribute('href') || '';
+            if (href && href.indexOf('styles.css') !== -1) {
+                const base = href.split('?')[0];
+                const newHref = base + '?v=' + ASSET_VERSION;
+                if (link.getAttribute('href') !== newHref) {
+                    link.setAttribute('href', newHref);
+                    console.log('🔄 Cache-busting appliqué à styles.css:', newHref);
+                }
+            }
+        });
+    } catch (e) {
+        console.warn('Cache-busting CSS ignoré:', e);
+    }
+});
+
 // Forcer l'affichage des produits en 1 colonne et centrés (toutes pages)
 document.addEventListener('DOMContentLoaded', function() {
     function applyOnePerRow() {
