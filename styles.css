@@ -1,9 +1,74 @@
 /* Reset et styles de base */
-/* Hide mobile menu header on desktop */
+/* Hide mobile menu header on desktop + Navbar thème admin (desktop) */
 @media (min-width: 769px) {
-  .nav-menu .mobile-menu-header {
-    display: none !important;
+  .nav-menu .mobile-menu-header { display: none !important; }
+  .navbar.admin-theme { background: #ffffff; border-bottom: 1px solid #e1e5e9; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+  .navbar.admin-theme .nav-container { align-items: center; }
+  .navbar.admin-theme .nav-menu { display: flex; gap: 0; background: transparent; }
+  .navbar.admin-theme .logo .logo-fallback { color: #8b7355; font-weight: 600; }
+  .navbar.admin-theme .nav-link { font-weight: 500; }
+  .navbar.admin-theme .nav-link {
+    display: flex; align-items: center; gap: 0.35rem;
+    padding: 8px 0.7rem; color: #666; text-decoration: none;
+    transition: all 0.3s ease; border-bottom: 3px solid transparent; border-radius: 0;
   }
+  .navbar.admin-theme .nav-link:hover { background: #f8f9fa; color: #8b7355; }
+  .navbar.admin-theme .nav-link.active { background: #f8f6f3; color: #8b7355; border-bottom-color: #8b7355; }
+}
+
+/* ===== Navbar thème admin (mobile) ===== */
+@media (max-width: 768px) {
+  /* Menu coulissant: fond et header */
+  .navbar.admin-theme .nav-menu {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f6f3 100%);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    border-top: 3px solid #d4af37;
+    padding: 2.2rem 0 1.6rem; /* header + liste plus compacts */
+  }
+  .navbar.admin-theme .mobile-menu-header {
+    padding: 0 1rem 0.6rem 1rem; /* réduit */
+    margin-bottom: 0.3rem; /* réduit */
+    border-bottom: 1px solid rgba(212,175,55,0.25);
+  }
+  .navbar.admin-theme .mobile-menu-header h3 {
+    font-size: 1rem; /* légèrement réduit */
+    color: #2c3e50; font-weight: 600; margin: 0 0 0.2rem 0;
+  }
+  .navbar.admin-theme .mobile-menu-header p {
+    font-size: 0.85rem; /* légèrement réduit */
+    color: #8b7355; opacity: 0.9; margin: 0;
+  }
+
+  /* Liens: mêmes couleurs et sensations que l'admin */
+  .navbar.admin-theme .nav-link {
+    display: block;
+    margin: 0.08rem 0.45rem; /* Option B */
+    padding: 0.62rem 0.75rem; /* Option B */
+    color: #666;
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: blur(5px);
+    border-radius: 9px; /* Option B */
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem; /* Option B */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .navbar.admin-theme .nav-link:hover {
+    background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+    color: #ffffff;
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.35);
+  }
+  .navbar.admin-theme .nav-link:active {
+    transform: scale(0.98);
+  }
+  .navbar.admin-theme .nav-link.active {
+    background: #f8f6f3;
+    color: #8b7355;
+    box-shadow: 0 8px 18px rgba(139, 115, 85, 0.18);
+  }
+  .navbar.admin-theme .nav-link:hover { background: #f8f9fa; color: #8b7355; }
+  .navbar.admin-theme .nav-link.active { background: #f8f6f3; color: #8b7355; border-bottom-color: #8b7355; }
 }
 
 /* Coming Soon empty state */
@@ -1887,10 +1952,12 @@ body {
 }
 
 /* Styles pour très petits écrans */
-@media (max-width: 360px) {
-    .category-section {
-        padding: 30px 0;
-    }
+@media (max-width: 480px) {
+  .admin-sidebar {
+    width: 100%;
+    left: -100%;
+  }
+  }
     
     .section-title {
         font-size: 1.4rem;

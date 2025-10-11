@@ -25,7 +25,7 @@ window.addEventListener('load', function() {
 // Cache-busting pour styles.css en production (Netlify)
 document.addEventListener('DOMContentLoaded', function() {
     try {
-        const ASSET_VERSION = '2025-10-11-1';
+        const ASSET_VERSION = '2025-10-11-3';
         const links = Array.from(document.querySelectorAll('link[rel="stylesheet"]'));
         links.forEach(link => {
             const href = link.getAttribute('href') || '';
