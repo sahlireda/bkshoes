@@ -237,3 +237,10 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 console.log('✅ Système de synchronisation administration initialisé');
+
+// Alias pratique pour déclencher une synchro manuelle depuis la console
+// Exemple: forceSyncProducts()
+window.forceSyncProducts = function() {
+    console.log('🔄 forceSyncProducts() appelé');
+    syncProductsFromAdmin();
+};

@@ -304,29 +304,53 @@
                     <label>Images du produit (3 images) *</label>
                     <div class="images-upload">
                         <div class="image-upload-item">
-                            <label for="productImage1" class="upload-label">
-                                <i class="fas fa-camera"></i>
-                                Image 1 (Principale)
+                            <label class="upload-label">
+                                <i class="fas fa-link"></i>
+                                Image 1 (Principale) — Source: Google Drive uniquement
                             </label>
-                            <input type="file" id="productImage1" accept="image/*" onchange="previewImage(1)">
                             <div class="image-preview" id="imagePreview1"></div>
+                            <div class="drive-input">
+                                <label for="driveLink1" style="display:block; margin-top: .5rem; font-size: .9rem; color:#555;">Ou collez un lien/ID Google Drive</label>
+                                <div style="display:flex; gap:.5rem; align-items:center;">
+                                    <input type="text" id="driveLink1" placeholder="https://drive.google.com/file/d/ID/view... ou ID" style="flex:1;">
+                                    <button type="button" class="add-btn" onclick="useDriveImage(1)"><i class="fas fa-link"></i> Utiliser</button>
+                                </div>
+                            </div>
                         </div>
                         <div class="image-upload-item">
-                            <label for="productImage2" class="upload-label">
-                                <i class="fas fa-camera"></i>
-                                Image 2 (Côté)
+                            <label class="upload-label">
+                                <i class="fas fa-link"></i>
+                                Image 2 (Côté) — Source: Google Drive uniquement
                             </label>
-                            <input type="file" id="productImage2" accept="image/*" onchange="previewImage(2)">
                             <div class="image-preview" id="imagePreview2"></div>
+                            <div class="drive-input">
+                                <label for="driveLink2" style="display:block; margin-top: .5rem; font-size: .9rem; color:#555;">Ou collez un lien/ID Google Drive</label>
+                                <div style="display:flex; gap:.5rem; align-items:center;">
+                                    <input type="text" id="driveLink2" placeholder="https://drive.google.com/file/d/ID/view... ou ID" style="flex:1;">
+                                    <button type="button" class="add-btn" onclick="useDriveImage(2)"><i class="fas fa-link"></i> Utiliser</button>
+                                </div>
+                            </div>
                         </div>
                         <div class="image-upload-item">
-                            <label for="productImage3" class="upload-label">
-                                <i class="fas fa-camera"></i>
-                                Image 3 (Détail)
+                            <label class="upload-label">
+                                <i class="fas fa-link"></i>
+                                Image 3 (Détail) — Source: Google Drive uniquement
                             </label>
-                            <input type="file" id="productImage3" accept="image/*" onchange="previewImage(3)">
                             <div class="image-preview" id="imagePreview3"></div>
+                            <div class="drive-input">
+                                <label for="driveLink3" style="display:block; margin-top: .5rem; font-size: .9rem; color:#555;">Ou collez un lien/ID Google Drive</label>
+                                <div style="display:flex; gap:.5rem; align-items:center;">
+                                    <input type="text" id="driveLink3" placeholder="https://drive.google.com/file/d/ID/view... ou ID" style="flex:1;">
+                                    <button type="button" class="add-btn" onclick="useDriveImage(3)"><i class="fas fa-link"></i> Utiliser</button>
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                    <div class="drive-helper" style="margin-top: .75rem; display:flex; gap:.5rem; align-items:center;">
+                        <a href="https://drive.google.com/drive/folders/1Mqt7TXhKsXVK5TWWJ6_Ku11U8w7azEQH?usp=sharing" target="_blank" rel="noopener" class="view-site-btn" style="text-decoration:none;">
+                            <i class="fas fa-folder-open"></i> Ouvrir mon dossier Drive Produits
+                        </a>
+                        <span style="font-size:.9rem; color:#666;">Rendez publics vos fichiers (Lien accessible à tous) puis collez le lien/ID.</span>
                     </div>
                 </div>
                 

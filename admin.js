@@ -11,6 +11,80 @@ function checkAuth() {
     return true;
 }
 
+// Placeholder SVG (data URL) pour les cas sans image
+const ADMIN_PLACEHOLDER = (() => {
+    const svg = `
+    <svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
+      <rect width="200" height="150" fill="#f0f2f5"/>
+      <text x="100" y="75" font-family="Arial, sans-serif" font-size="14" fill="#888" text-anchor="middle" dominant-baseline="middle">Aperçu indisponible</text>
+    </svg>`;
+    return `data:image/svg+xml;base64,${btoa(svg)}`;
+})();
+
+// ===== SUPPORT IMAGES GOOGLE DRIVE (Admin) =====
+// Extraction robuste de l'ID Drive depuis plusieurs formats d'URL
+function extractDriveId(input) {
+    if (!input) return '';
+    const str = String(input).trim().replace(/^['\"]+|['\"]+$/g, '');
+    // 1) Déjà un lien direct uc?id=FILE_ID
+    let m = str.match(/[?&]id=([a-zA-Z0-9_-]{10,})/);
+    if (m && m[1]) return m[1];
+    // 2) Forme standard: /file/d/FILE_ID/...
+    m = str.match(/\/file\/d\/([a-zA-Z0-9_-]{10,})(?:[/?#]|$)/);
+    if (m && m[1]) return m[1];
+    // 3) Forme courte: /d/FILE_ID/...
+    m = str.match(/\/d\/([a-zA-Z0-9_-]{10,})(?:[/?#]|$)/);
+    if (m && m[1]) return m[1];
+    // 4) Lien open?uc?id= ou open?id=
+    m = str.match(/open\?.*?[?&]id=([a-zA-Z0-9_-]{10,})/);
+    if (m && m[1]) return m[1];
+    // 5) Si l'utilisateur colle directement l'ID
+    if (/^[a-zA-Z0-9_-]{10,}$/.test(str)) return str;
+    return '';
+}
+
+// Convertir un lien de partage Drive ou un ID en lien direct image
+function driveShareToDirect(urlOrId) {
+    if (!urlOrId) return '';
+    const str = String(urlOrId).trim();
+    // Déjà un lien direct ?
+    if (/^https?:\/\/drive\.google\.com\/uc\?/.test(str)) return str;
+    const id = extractDriveId(str);
+    if (!id) return '';
+    return `https://drive.google.com/uc?export=view&id=${id}`;
+}
+
+// Utiliser une image depuis un lien/ID Drive pour l'emplacement n (1..3)
+function useDriveImage(n) {
+    try {
+        const input = document.getElementById(`driveLink${n}`);
+        const preview = document.getElementById(`imagePreview${n}`);
+        if (!input || !preview) return;
+        const val = (input.value || '').trim();
+        if (!val) {
+            showToast('Veuillez coller un lien ou ID Google Drive.', 'error');
+            return;
+        }
+        const direct = driveShareToDirect(val);
+        if (!direct) {
+            showToast('Lien/ID Drive invalide. Collez l\'URL complète ou uniquement l\'ID du fichier.', 'error');
+            return;
+        }
+        // Afficher l'aperçu avec bouton de suppression (comme upload local)
+        preview.innerHTML = `
+            <img src="${direct}" alt="Aperçu ${n}" style="max-width: 150px; max-height: 150px; border-radius: 8px;">
+            <button type="button" class="remove-image-btn" onclick="removeImage(${n})">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        showToast('Image Drive ajoutée', 'success');
+        console.log(`[Admin] Aperçu image ${n} défini:`, direct);
+    } catch (e) {
+        console.warn('useDriveImage error:', e);
+        showToast('Erreur lors de l\'ajout de l\'image Drive', 'error');
+    }
+}
+
 // Afficher un toast de succès/erreur
 function showToast(message, type = 'success') {
     let container = document.getElementById('toastContainer');
@@ -132,6 +206,42 @@ function saveProducts() {
     console.log('✅ Produits sauvegardés et synchronisés avec le site principal');
 }
 
+// Normaliser toutes les images des produits vers des liens directs Drive (migration)
+function normalizeAllProductImages() {
+    let changed = false;
+    products = products.map(p => {
+        let pChanged = false;
+        // Normaliser tableau images (max 3)
+        let images = Array.isArray(p.images) ? p.images.slice(0, 3) : [];
+        images = images.map(src => {
+            const direct = driveShareToDirect(src);
+            if (direct && direct !== src) {
+                pChanged = true;
+                return direct;
+            }
+            return src || '';
+        });
+        // Normaliser image unique (héritage)
+        let image = p.image;
+        if (image) {
+            const directOne = driveShareToDirect(image);
+            if (directOne && directOne !== image) {
+                pChanged = true;
+                image = directOne;
+            }
+        }
+        if (pChanged) {
+            changed = true;
+            return { ...p, images, image };
+        }
+        return p;
+    });
+    if (changed) {
+        console.log('🔧 Normalisation Drive détectée → sauvegarde');
+        saveProducts();
+    }
+}
+
 // Fonction pour mettre à jour automatiquement les pages du site web
 function updateWebsitePages() {
     console.log('🔄 Mise à jour automatique des pages du site web...');
@@ -196,14 +306,15 @@ function loadProducts() {
     tbody.innerHTML = '';
     
     filteredProducts.forEach(product => {
-        const mainImage = product.images && product.images[0] ? product.images[0] : (product.image || 'images/placeholder.jpg');
+        const raw = product.images && product.images[0] ? product.images[0] : (product.image || '');
+        const mainImage = driveShareToDirect(raw) || ADMIN_PLACEHOLDER;
         const sizesText = product.sizes ? product.sizes.join(', ') : '37-41';
         
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>
                 <div class="product-image-cell">
-                    <img src="${mainImage}" alt="${product.name}" onerror="this.src='images/placeholder.jpg'">
+                    <img src="${mainImage}" alt="${product.name}" onerror="this.onerror=null; this.src='${ADMIN_PLACEHOLDER}'">
                     ${product.images && product.images.length > 1 ? `<span class="image-count">+${product.images.length - 1}</span>` : ''}
                 </div>
             </td>
@@ -290,19 +401,21 @@ function openProductModal(productId = null) {
             document.getElementById('productStatus').value = product.status;
             document.getElementById('productDescription').value = product.description || '';
             
-            // Charger les images existantes
+            // Charger les images existantes (normalisées Drive)
             if (product.images && product.images.length > 0) {
                 product.images.forEach((image, index) => {
                     if (index < 3 && image) {
+                        const direct = driveShareToDirect(image);
                         document.getElementById(`imagePreview${index + 1}`).innerHTML = `
-                            <img src="${image}" alt="Aperçu ${index + 1}" style="max-width: 150px; max-height: 150px; border-radius: 8px;">
+                            <img src="${direct}" alt="Aperçu ${index + 1}" style="max-width: 150px; max-height: 150px; border-radius: 8px;">
                         `;
                     }
                 });
             } else if (product.image) {
                 // Compatibilité avec l'ancien format
+                const direct = driveShareToDirect(product.image);
                 document.getElementById('imagePreview1').innerHTML = `
-                    <img src="${product.image}" alt="Aperçu 1" style="max-width: 150px; max-height: 150px; border-radius: 8px;">
+                    <img src="${direct}" alt="Aperçu 1" style="max-width: 150px; max-height: 150px; border-radius: 8px;">
                 `;
             }
             
@@ -325,6 +438,11 @@ function openProductModal(productId = null) {
     }
     
     modal.style.display = 'flex';
+    // Focus direct sur le premier champ Drive pour faciliter le collage
+    const firstDrive = document.getElementById('driveLink1');
+    if (firstDrive) {
+        try { firstDrive.focus(); } catch(_) {}
+    }
 }
 
 // Fermer le modal
@@ -345,15 +463,14 @@ function viewProduct(id) {
     const modal = document.createElement('div');
     modal.className = 'modal';
     modal.style.display = 'flex';
-    
-    const imagesHtml = product.images && product.images.length > 0 
-        ? product.images.map((img, index) => `
-            <div class="product-detail-image">
-                <img src="${img}" alt="${product.name} - Image ${index + 1}" style="max-width: 200px; max-height: 200px; border-radius: 8px; margin: 5px;">
-            </div>
-        `).join('')
-        : `<div class="product-detail-image">
-            <img src="${product.image || 'images/placeholder.jpg'}" alt="${product.name}" style="max-width: 200px; max-height: 200px; border-radius: 8px;">
+        const imagesHtml = product.images && product.images.length > 0 
+            ? product.images.map((img, index) => `
+                <div class="product-detail-image">
+                    <img src="${img}" alt="${product.name} - Image ${index + 1}" style="max-width: 200px; max-height: 200px; border-radius: 8px; margin: 5px;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2220%22%20height%3D%2220%22%3E%0A%3Crect%20width%3D%2220%22%20height%3D%2220%22%20fill%3D%22%23F7F7F7%22/%3E'>
+                </div>
+            `).join('')
+            : `<div class="product-detail-image">
+            <img src="${product.image || 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2220%22%20height%3D%2220%22%3E%0A%3Crect%20width%3D%2220%22%20height%3D%2220%22%20fill%3D%22%23F7F7F7%22/%3E'}" alt="${product.name}" style="max-width: 200px; max-height: 200px; border-radius: 8px;">
         </div>`;
     
     const sizesHtml = product.sizes && product.sizes.length > 0
@@ -415,6 +532,7 @@ function deleteProduct(id) {
 // Fonction pour prévisualiser une image
 function previewImage(imageNumber) {
     const fileInput = document.getElementById(`productImage${imageNumber}`);
+    if (!fileInput) { return; }
     const preview = document.getElementById(`imagePreview${imageNumber}`);
     const file = fileInput.files[0];
     
@@ -436,25 +554,52 @@ function previewImage(imageNumber) {
 
 // Fonction pour supprimer une image
 function removeImage(imageNumber) {
-    document.getElementById(`productImage${imageNumber}`).value = '';
-    document.getElementById(`imagePreview${imageNumber}`).innerHTML = '';
+    const preview = document.getElementById(`imagePreview${imageNumber}`);
+    if (preview) preview.innerHTML = '';
+    const linkEl = document.getElementById(`driveLink${imageNumber}`);
+    if (linkEl) linkEl.value = '';
 }
 
 // Gestion du formulaire de produit
+// Collecter les images depuis les aperçus OU directement depuis les champs Drive
+function collectProductImages() {
+    const images = [];
+    for (let i = 1; i <= 3; i++) {
+        const preview = document.getElementById(`imagePreview${i}`);
+        const img = preview ? preview.querySelector('img') : null;
+        if (img && img.src) {
+            images.push(img.src);
+            continue;
+        }
+        const linkEl = document.getElementById(`driveLink${i}`);
+        const val = linkEl ? linkEl.value.trim() : '';
+        if (val) {
+            const direct = driveShareToDirect(val);
+            if (direct) {
+                images.push(direct);
+                // Optionnel: mettre aussi l'aperçu pour retour visuel
+                if (preview) {
+                    preview.innerHTML = `
+                        <img src="${direct}" alt="Aperçu ${i}" style="max-width: 150px; max-height: 150px; border-radius: 8px;">
+                        <button type=\"button\" class=\"remove-image-btn\" onclick=\"removeImage(${i})\">\n                            <i class=\"fas fa-times\"></i>\n                        </button>
+                    `;
+                }
+            } else {
+                console.warn('Lien/ID Drive invalide ignoré pour l\'image', i, val);
+            }
+        }
+    }
+    return images;
+}
+
+ 
 document.getElementById('productForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
     const productId = document.getElementById('productId').value;
     
-    // Récupérer les images
-    const images = [];
-    for (let i = 1; i <= 3; i++) {
-        const preview = document.getElementById(`imagePreview${i}`);
-        const img = preview.querySelector('img');
-        if (img) {
-            images.push(img.src);
-        }
-    }
+    // Récupérer les images (aperçus ou champs Drive directement)
+    const images = collectProductImages();
     
     // Récupérer les pointures sélectionnées
     const sizes = [];
@@ -476,7 +621,7 @@ document.getElementById('productForm').addEventListener('submit', function(e) {
     
     // Validation
     if (images.length === 0) {
-        alert('Veuillez ajouter au moins une image.');
+        alert('Veuillez ajouter au moins une image (collez un lien/ID Google Drive puis validez ou appuyez sur Entrée).');
         return;
     }
     
@@ -614,6 +759,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialiser les produits par défaut si nécessaire
     initializeDefaultProducts();
     
+    // Migrer/normaliser d'abord les liens d'images si nécessaire
+    normalizeAllProductImages();
+
     // Charger les données
     loadProducts();
     updateDashboardStats();
@@ -623,4 +771,24 @@ document.addEventListener('DOMContentLoaded', function() {
     addActivity('Connexion administrateur');
     
     console.log('✅ Administration BkShoes initialisée avec succès');
+    // Entrée rapide: appuyer sur Enter dans un champ Drive applique l'image
+    [1,2,3].forEach(i => {
+        const linkEl = document.getElementById(`driveLink${i}`);
+        if (linkEl) {
+            linkEl.addEventListener('keydown', function(ev) {
+                if (ev.key === 'Enter') {
+                    ev.preventDefault();
+                    useDriveImage(i);
+                }
+            });
+            // Déclencher l'aperçu automatiquement lors d'un collage ou changement
+            const trigger = () => {
+                // Petitre délai pour laisser le collage remplir la valeur
+                setTimeout(() => useDriveImage(i), 0);
+            };
+            linkEl.addEventListener('paste', trigger);
+            linkEl.addEventListener('change', trigger);
+            linkEl.addEventListener('blur', function(){ if (this.value.trim()) useDriveImage(i); });
+        }
+    });
 });

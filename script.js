@@ -2,7 +2,50 @@
 const WHATSAPP_NUMBER = "212671818295"; // Numéro WhatsApp configuré
 
 // Toggle pour ignorer la BDD (localStorage) et désactiver la synchro produits
-const DISABLE_BDD_SYNC = true; // Passez à false pour réactiver la synchro
+const DISABLE_BDD_SYNC = false; // Passez à false pour réactiver la synchro
+
+// ===== SUPPORT IMAGES GOOGLE DRIVE =====
+// Convertit un lien de partage Drive ou un ID de fichier en lien direct image
+function driveShareToDirect(urlOrId) {
+    if (!urlOrId) return '';
+    const str = String(urlOrId).trim();
+    // Déjà un lien direct ?
+    if (/^https?:\/\/drive\.google\.com\/uc\?/.test(str)) return str;
+    // Lien de partage: https://drive.google.com/file/d/FILE_ID/view?usp=sharing
+    const m = str.match(/\/(?:file|d)\/([^/]+)\//);
+    const id = m ? m[1] : str; // fallback: considérer comme un ID brut
+    return `https://drive.google.com/uc?export=view&id=${id}`;
+}
+
+// Réécrit automatiquement les images/Background déclarées avec des attributs data-drive-*
+function rewriteDriveImages() {
+    try {
+        // <img data-drive-id="FILE_ID"> ou data-drive-src avec lien de partage complet
+        document.querySelectorAll('img[data-drive-id], img[data-drive-src]').forEach(img => {
+            const byId = img.getAttribute('data-drive-id');
+            const bySrc = img.getAttribute('data-drive-src');
+            const direct = driveShareToDirect(bySrc || byId);
+            if (direct) {
+                img.setAttribute('src', direct);
+            }
+        });
+
+        // Eléments avec background via data-drive-bg-id / data-drive-bg
+        document.querySelectorAll('[data-drive-bg-id], [data-drive-bg]')
+            .forEach(el => {
+                const byId = el.getAttribute('data-drive-bg-id');
+                const bySrc = el.getAttribute('data-drive-bg');
+                const direct = driveShareToDirect(bySrc || byId);
+                if (direct) {
+                    el.style.backgroundImage = `url("${direct}")`;
+                    el.style.backgroundSize = el.style.backgroundSize || 'cover';
+                    el.style.backgroundPosition = el.style.backgroundPosition || 'center';
+                }
+            });
+    } catch (e) {
+        console.warn('rewriteDriveImages() error:', e);
+    }
+}
 
 // ===== LOADER PROFESSIONNEL =====
 function hideLoader() {
@@ -171,6 +214,8 @@ function initEntranceAnimations() {
 
 // ===== PARALLAXE AVANCÉ =====
 let ticking = false;
+// Appliquer la réécriture des images Drive le plus tôt possible
+document.addEventListener('DOMContentLoaded', rewriteDriveImages);
 
 function updateParallax() {
     const scrolled = window.pageYOffset;
@@ -827,6 +872,11 @@ function createProductCard(product) {
     card.setAttribute('data-category', product.category);
     card.setAttribute('data-name', product.name);
     card.setAttribute('data-price', `${product.price} DH`);
+    const mainImageRaw = (product.images && product.images[0]) || product.image || '';
+    if (mainImageRaw) {
+        // Conserver l'url normalisée pour d'autres scripts (confirmation, etc.)
+        card.setAttribute('data-image', driveShareToDirect(mainImageRaw));
+    }
     
     // Vérifier si c'est un produit avec page dédiée (sandales ou bottes)
     const hasDetailPage = (product.category === 'sandales' && product.name.toLowerCase().includes('élégantes beige')) ||
@@ -840,10 +890,11 @@ function createProductCard(product) {
         card.onclick = () => window.location.href = detailPageUrl;
     }
     
+    const imgSrc = driveShareToDirect(mainImageRaw);
     card.innerHTML = `
         <div class="product-image">
-            ${product.image ? 
-                `<img src="${product.image}" alt="${product.name}" class="product-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            ${mainImageRaw ? 
+                `<img src="${imgSrc}" alt="${product.name}" class="product-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                 <div class="placeholder-image" style="display: none;">
                     <i class="fas fa-shoe-prints"></i>
                     <p>${getShortName(product.name)}</p>
