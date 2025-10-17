@@ -54,6 +54,29 @@ function driveShareToDirect(urlOrId) {
     return `https://drive.google.com/uc?export=view&id=${id}`;
 }
 
+// Accepter aussi des liens directs externes (ex: i.ibb.co)
+function isDirectHttpUrl(url) {
+    try {
+        const u = new URL(url);
+        return u.protocol === 'http:' || u.protocol === 'https:';
+    } catch (_) {
+        return false;
+    }
+}
+
+// Normaliser tout lien saisi: Drive (converti) ou URL http(s) inchangée
+function normalizeImageLink(input) {
+    const val = (input || '').trim();
+    if (!val) return '';
+    // 1) Tenter conversion Drive
+    const drive = driveShareToDirect(val);
+    if (drive) return drive;
+    // 2) Si http(s), accepter tel quel
+    if (isDirectHttpUrl(val)) return val;
+    // 3) Sinon, vide (non reconnu)
+    return '';
+}
+
 // Utiliser une image depuis un lien/ID Drive pour l'emplacement n (1..3)
 function useDriveImage(n) {
     try {
@@ -62,12 +85,12 @@ function useDriveImage(n) {
         if (!input || !preview) return;
         const val = (input.value || '').trim();
         if (!val) {
-            showToast('Veuillez coller un lien ou ID Google Drive.', 'error');
+            showToast('Veuillez coller un lien direct (Drive, i.ibb.co, etc.) ou un ID Drive.', 'error');
             return;
         }
-        const direct = driveShareToDirect(val);
+        const direct = normalizeImageLink(val);
         if (!direct) {
-            showToast('Lien/ID Drive invalide. Collez l\'URL complète ou uniquement l\'ID du fichier.', 'error');
+            showToast('Lien invalide. Collez une URL http(s) directe ou un ID Drive.', 'error');
             return;
         }
         // Afficher l'aperçu avec bouton de suppression (comme upload local)
@@ -77,11 +100,11 @@ function useDriveImage(n) {
                 <i class="fas fa-times"></i>
             </button>
         `;
-        showToast('Image Drive ajoutée', 'success');
+        showToast('Image ajoutée', 'success');
         console.log(`[Admin] Aperçu image ${n} défini:`, direct);
     } catch (e) {
         console.warn('useDriveImage error:', e);
-        showToast('Erreur lors de l\'ajout de l\'image Drive', 'error');
+        showToast('Erreur lors de l\'ajout de l\'image', 'error');
     }
 }
 
@@ -307,7 +330,7 @@ function loadProducts() {
     
     filteredProducts.forEach(product => {
         const raw = product.images && product.images[0] ? product.images[0] : (product.image || '');
-        const mainImage = driveShareToDirect(raw) || ADMIN_PLACEHOLDER;
+        const mainImage = normalizeImageLink(raw) || ADMIN_PLACEHOLDER;
         const sizesText = product.sizes ? product.sizes.join(', ') : '37-41';
         
         const row = document.createElement('tr');
@@ -405,7 +428,7 @@ function openProductModal(productId = null) {
             if (product.images && product.images.length > 0) {
                 product.images.forEach((image, index) => {
                     if (index < 3 && image) {
-                        const direct = driveShareToDirect(image);
+                        const direct = normalizeImageLink(image);
                         document.getElementById(`imagePreview${index + 1}`).innerHTML = `
                             <img src="${direct}" alt="Aperçu ${index + 1}" style="max-width: 150px; max-height: 150px; border-radius: 8px;">
                         `;
@@ -413,7 +436,7 @@ function openProductModal(productId = null) {
                 });
             } else if (product.image) {
                 // Compatibilité avec l'ancien format
-                const direct = driveShareToDirect(product.image);
+                const direct = normalizeImageLink(product.image);
                 document.getElementById('imagePreview1').innerHTML = `
                     <img src="${direct}" alt="Aperçu 1" style="max-width: 150px; max-height: 150px; border-radius: 8px;">
                 `;
@@ -574,7 +597,7 @@ function collectProductImages() {
         const linkEl = document.getElementById(`driveLink${i}`);
         const val = linkEl ? linkEl.value.trim() : '';
         if (val) {
-            const direct = driveShareToDirect(val);
+            const direct = normalizeImageLink(val);
             if (direct) {
                 images.push(direct);
                 // Optionnel: mettre aussi l'aperçu pour retour visuel
@@ -585,7 +608,7 @@ function collectProductImages() {
                     `;
                 }
             } else {
-                console.warn('Lien/ID Drive invalide ignoré pour l\'image', i, val);
+                console.warn('Lien image invalide ignoré pour l\'image', i, val);
             }
         }
     }
@@ -621,7 +644,7 @@ document.getElementById('productForm').addEventListener('submit', function(e) {
     
     // Validation
     if (images.length === 0) {
-        alert('Veuillez ajouter au moins une image (collez un lien/ID Google Drive puis validez ou appuyez sur Entrée).');
+        alert('Veuillez ajouter au moins une image (collez un lien direct http(s) ou un ID Drive puis validez ou appuyez sur Entrée).');
         return;
     }
     
