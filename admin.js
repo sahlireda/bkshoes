@@ -227,6 +227,11 @@ function saveProducts() {
     loadProducts();
     
     console.log('✅ Produits sauvegardés et synchronisés avec le site principal');
+
+    // Publier aussi les produits statiques (Option A) via Netlify Function
+    publishStaticProducts(products).catch(err => {
+        console.warn('⚠️ Publication JSON statique échouée:', err);
+    });
 }
 
 // Normaliser toutes les images des produits vers des liens directs Drive (migration)
@@ -675,6 +680,26 @@ document.getElementById('productForm').addEventListener('submit', function(e) {
     loadProducts();
     showToast('Produit enregistré avec succès', 'success');
 });
+
+// Appelle la fonction Netlify pour pousser data/products.json dans le repo
+async function publishStaticProducts(productsArray) {
+    try {
+        const resp = await fetch('/.netlify/functions/update-products', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ products: productsArray })
+        });
+        if (!resp.ok) {
+            const txt = await resp.text();
+            throw new Error(`Netlify function error: ${txt}`);
+        }
+        showToast('Produits publiés (JSON) ✔️', 'success');
+        console.log('✅ products.json mis à jour via Netlify Function');
+    } catch (e) {
+        showToast('Publication JSON échouée (voir console)', 'error');
+        console.error(e);
+    }
+}
 
 // Fonction pour initialiser les produits par défaut lors du premier chargement
 function initializeDefaultProducts() {
