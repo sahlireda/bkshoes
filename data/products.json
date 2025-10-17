@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "name": "Mocassin Noir Classique",
+    "category": "mocassins",
+    "price": 359,
+    "status": "active",
+    "description": "Mocassin en daim véritable, finition soignée, confort quotidien.",
+    "images": [
+      "https://i.ibb.co/Sww9d9R6/mocassin-noir-1.jpg"
+    ],
+    "sizes": ["37", "38", "39", "40", "41"]
+  }
+]

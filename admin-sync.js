@@ -231,9 +231,12 @@ setInterval(() => {
 
 // Synchronisation au chargement de la page
 document.addEventListener('DOMContentLoaded', function() {
+    // Charger d'abord les produits statiques si localStorage vide, puis synchroniser la page
     setTimeout(() => {
-        syncProductsFromAdmin();
-    }, 1000);
+        loadStaticProductsIfEmpty().then(() => {
+            syncProductsFromAdmin();
+        });
+    }, 500);
 });
 
 console.log('✅ Système de synchronisation administration initialisé');
@@ -244,3 +247,35 @@ window.forceSyncProducts = function() {
     console.log('🔄 forceSyncProducts() appelé');
     syncProductsFromAdmin();
 };
+
+// Charger des produits statiques (Option A) si aucune donnée locale
+function loadStaticProductsIfEmpty() {
+    return new Promise(resolve => {
+        try {
+            const existing = JSON.parse(localStorage.getItem('bkshoes_products') || '[]');
+            if (Array.isArray(existing) && existing.length > 0) {
+                resolve(false);
+                return;
+            }
+        } catch (_) {
+            // ignore
+        }
+
+        fetch('data/products.json', { cache: 'no-store' })
+            .then(resp => resp.ok ? resp.json() : [])
+            .then(json => {
+                if (Array.isArray(json) && json.length > 0) {
+                    localStorage.setItem('bkshoes_products', JSON.stringify(json));
+                    localStorage.setItem('bkshoes_products_timestamp', Date.now());
+                    console.log('📥 Produits statiques chargés depuis data/products.json');
+                } else {
+                    console.log('ℹ️ Aucun produit statique trouvé dans data/products.json');
+                }
+                resolve(true);
+            })
+            .catch(err => {
+                console.warn('⚠️ Échec du chargement des produits statiques:', err);
+                resolve(false);
+            });
+    });
+}
