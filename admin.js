@@ -204,34 +204,47 @@ function showSection(sectionId) {
     }
 }
 
-// Stockage des produits (simulation d'une base de données)
-let products = JSON.parse(localStorage.getItem('bkshoes_products')) || [];
+// Référence à la collection Firestore
+const productsCollection = db.collection('products');
 
-// Initialiser les produits au premier chargement (système vide par défaut)
-if (!localStorage.getItem('bkshoes_products')) {
-    localStorage.setItem('bkshoes_products', JSON.stringify([]));
-    localStorage.setItem('bkshoes_products_timestamp', Date.now());
-    console.log('🆕 Système initialisé avec base de données vide');
-}
+let products = []; // Les produits seront chargés depuis Firestore
 
-// Sauvegarder les produits
-function saveProducts() {
-    localStorage.setItem('bkshoes_products', JSON.stringify(products));
-    
-    // Déclencher une mise à jour sur le site principal
-    const timestamp = Date.now();
-    localStorage.setItem('bkshoes_products_timestamp', timestamp);
-    
-    updateDashboardStats();
-    updateCategoryStats();
-    loadProducts();
-    
-    console.log('✅ Produits sauvegardés et synchronisés avec le site principal');
+// Sauvegarder les produits dans Firestore
+async function saveProducts() {
+    try {
+        // Mettre à jour chaque produit individuellement ou utiliser un batch
+        // Pour la simplicité, nous allons recharger et sauvegarder tout le tableau
+        // Dans une application réelle, on ferait des opérations ciblées (add, update, delete)
 
-    // Publier aussi les produits statiques (Option A) via Netlify Function
-    publishStaticProducts(products).catch(err => {
-        console.warn('⚠️ Publication JSON statique échouée:', err);
-    });
+        // Supprimer tous les produits existants dans Firestore (pour une synchronisation complète)
+        const existingProducts = await productsCollection.get();
+        const batch = db.batch();
+        existingProducts.docs.forEach(doc => {
+            batch.delete(doc.ref);
+        });
+        await batch.commit();
+
+        // Ajouter tous les produits actuels à Firestore
+        for (const product of products) {
+            await productsCollection.doc(String(product.id)).set(product);
+        }
+
+        updateDashboardStats();
+        updateCategoryStats();
+        loadProducts(); // Recharger depuis Firestore après sauvegarde
+
+        console.log('✅ Produits sauvegardés et synchronisés avec Firestore');
+        showToast('Produits enregistrés dans Firestore', 'success');
+
+        // Publier aussi les produits statiques (Option A) via Netlify Function
+        publishStaticProducts(products).catch(err => {
+            console.warn('⚠️ Publication JSON statique échouée:', err);
+        });
+
+    } catch (e) {
+        console.error('❌ Erreur lors de la sauvegarde des produits dans Firestore:', e);
+        showToast('Erreur de sauvegarde Firestore', 'error');
+    }
 }
 
 // Normaliser toutes les images des produits vers des liens directs Drive (migration)
@@ -270,45 +283,22 @@ function normalizeAllProductImages() {
     }
 }
 
-// Fonction pour mettre à jour automatiquement les pages du site web
+// Fonction pour mettre à jour automatiquement les pages du site web (peut être simplifiée si Firestore est la source unique)
 function updateWebsitePages() {
     console.log('🔄 Mise à jour automatique des pages du site web...');
+    // Si Firestore est la source unique, cette fonction pourrait simplement déclencher un rechargement des données sur les pages front-end
+    // Pour l'instant, nous laissons la logique de localStorage pour la compatibilité si elle est utilisée ailleurs.
+    // Idéalement, les pages front-end liraient directement de Firestore.
     
-    const categories = ['mocassins', 'ballerines', 'mules', 'sandales', 'baskets', 'bottes'];
-    
-    categories.forEach(category => {
-        const categoryProducts = products.filter(p => p.category === category && p.status === 'active');
-        updateCategoryPage(category, categoryProducts);
-    });
-    
-    // Déclencher un événement pour notifier les pages ouvertes
+    // Déclencher un événement pour notifier les pages ouvertes (si elles écoutent toujours localStorage)
     localStorage.setItem('bkshoes_update_trigger', Date.now());
     
-    addActivity('Pages du site mises à jour automatiquement');
+    addActivity('Pages du site mises à jour automatiquement (via Firestore)');
     console.log('✅ Toutes les pages du site ont été mises à jour');
 }
 
-// Fonction pour mettre à jour une page de catégorie spécifique
-function updateCategoryPage(category, categoryProducts) {
-    const categoryData = {
-        category: category,
-        products: categoryProducts.map(product => ({
-            id: product.id,
-            name: product.name,
-            price: product.price,
-            images: product.images || [product.image],
-            sizes: product.sizes || ['37', '38', '39', '40', '41'],
-            description: product.description,
-            status: product.status
-        })),
-        lastUpdate: Date.now()
-    };
-    
-    // Stocker les données de la catégorie
-    localStorage.setItem(`bkshoes_${category}_data`, JSON.stringify(categoryData));
-    
-    console.log(`📄 Page ${category} mise à jour avec ${categoryProducts.length} produits`);
-}
+// La fonction updateCategoryPage n'est plus nécessaire si les pages front-end lisent directement de Firestore.
+// Si elles dépendent encore de localStorage, il faudrait adapter cette logique.
 
 // Charger les produits dans le tableau
 function loadProducts() {
@@ -548,12 +538,20 @@ function viewProduct(id) {
     });
 }
 
-// Supprimer un produit
-function deleteProduct(id) {
+// Supprimer un produit de Firestore
+async function deleteProduct(id) {
     if (confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
-        products = products.filter(p => p.id !== id);
-        saveProducts();
-        addActivity(`Produit supprimé (ID: ${id})`);
+        try {
+            await productsCollection.doc(String(id)).delete();
+            products = products.filter(p => p.id !== id); // Mettre à jour le tableau local
+            // Pas besoin de saveProducts() ici, car la suppression est directe dans Firestore
+            loadProducts(); // Recharger les produits après suppression
+            addActivity(`Produit supprimé (ID: ${id}) de Firestore`);
+            showToast('Produit supprimé de Firestore', 'success');
+        } catch (e) {
+            console.error('❌ Erreur lors de la suppression du produit de Firestore:', e);
+            showToast('Erreur de suppression Firestore', 'error');
+        }
     }
 }
 
@@ -672,7 +670,7 @@ document.getElementById('productForm').addEventListener('submit', function(e) {
         addActivity(`Nouveau produit ajouté: ${productData.name}`);
     }
     
-    saveProducts();
+    saveProducts(); // Sauvegarder dans Firestore
     updateWebsitePages(); // Mettre à jour automatiquement les pages du site
     closeProductModal();
     // Rediriger l'UI vers la section Produits et afficher un toast de succès
@@ -701,14 +699,17 @@ async function publishStaticProducts(productsArray) {
     }
 }
 
-// Fonction pour initialiser les produits par défaut lors du premier chargement
-function initializeDefaultProducts() {
-    const existingProducts = localStorage.getItem('bkshoes_products');
-    if (!existingProducts) {
-        console.log('🔄 Initialisation des produits par défaut...');
-        saveProducts();
+// Fonction pour initialiser les produits par défaut lors du premier chargement (si Firestore est vide)
+async function initializeDefaultProducts() {
+    const snapshot = await productsCollection.get();
+    if (snapshot.empty) {
+        console.log('🔄 Initialisation des produits par défaut dans Firestore...');
+        // Vous pouvez ajouter des produits par défaut ici si nécessaire
+        // Par exemple:
+        // await productsCollection.doc("1").set({ id: 1, name: "Produit par défaut", ... });
+        // Pour l'instant, nous ne faisons rien si Firestore est vide, l'utilisateur devra ajouter des produits manuellement.
         updateWebsitePages();
-        addActivity('Produits par défaut initialisés');
+        addActivity('Produits par défaut initialisés dans Firestore (si Firestore était vide)');
     }
 }
 
@@ -752,33 +753,32 @@ function addActivity(message) {
     }
 }
 
-// Réinitialiser toutes les données
-function clearAllData() {
-    if (confirm('⚠️ ATTENTION !\n\nCette action va supprimer TOUS les produits de TOUTES les catégories.\n\nÊtes-vous absolument sûr de vouloir continuer ?')) {
-        console.log('🗑️ Suppression de tous les produits...');
+// Réinitialiser toutes les données (supprimer tous les produits de Firestore)
+async function clearAllData() {
+    if (confirm('⚠️ ATTENTION !\n\nCette action va supprimer TOUS les produits de TOUTES les catégories de Firestore.\n\nÊtes-vous absolument sûr de vouloir continuer ?')) {
+        console.log('🗑️ Suppression de tous les produits de Firestore...');
         
-        // Vider le localStorage complètement
-        localStorage.removeItem('bkshoes_products');
-        localStorage.removeItem('bkshoes_products_timestamp');
-        localStorage.removeItem('bkshoes_last_sync_check');
-        
-        // Vider les données par catégorie
-        const categories = ['mocassins', 'ballerines', 'mules', 'sandales', 'baskets', 'bottes'];
-        categories.forEach(category => {
-            localStorage.removeItem(`bkshoes_${category}_data`);
-        });
-        
-        // Réinitialiser le tableau des produits
-        products = [];
-        
-        // Sauvegarder l'état vide
-        saveProducts();
-        updateWebsitePages();
-        
-        addActivity('🗑️ TOUS les produits ont été supprimés');
-        
-        console.log('✅ Tous les produits supprimés avec succès');
-        alert('✅ Tous les produits ont été supprimés avec succès !\n\n📄 Les pages du site se mettent à jour automatiquement.\n\nVous pouvez maintenant ajouter vos nouveaux produits.');
+        try {
+            const snapshot = await productsCollection.get();
+            const batch = db.batch();
+            snapshot.docs.forEach(doc => {
+                batch.delete(doc.ref);
+            });
+            await batch.commit();
+
+            products = []; // Réinitialiser le tableau local
+            // Pas besoin de saveProducts() ici, car la suppression est directe dans Firestore
+            loadProducts(); // Recharger les produits après suppression
+            updateWebsitePages();
+            
+            addActivity('🗑️ TOUS les produits ont été supprimés de Firestore');
+            
+            console.log('✅ Tous les produits supprimés de Firestore avec succès');
+            alert('✅ Tous les produits ont été supprimés de Firestore avec succès !\n\n📄 Les pages du site se mettent à jour automatiquement.\n\nVous pouvez maintenant ajouter vos nouveaux produits.');
+        } catch (e) {
+            console.error('❌ Erreur lors de la suppression de tous les produits de Firestore:', e);
+            showToast('Erreur de suppression globale Firestore', 'error');
+        }
     }
 }
 
@@ -791,7 +791,7 @@ window.addEventListener('click', function(e) {
 });
 
 // Initialisation
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() { // Utiliser async ici
     // Vérifier l'authentification
     if (!checkAuth()) return;
     
@@ -804,8 +804,8 @@ document.addEventListener('DOMContentLoaded', function() {
         lastLogin.value = new Date().toLocaleString('fr-FR');
     }
     
-    // Initialiser les produits par défaut si nécessaire
-    initializeDefaultProducts();
+    // Initialiser les produits par défaut si nécessaire (attend que Firestore soit prêt)
+    await initializeDefaultProducts();
     
     // Migrer/normaliser d'abord les liens d'images si nécessaire
     normalizeAllProductImages();

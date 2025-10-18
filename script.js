@@ -1146,13 +1146,8 @@ function selectProductAndSize(button) {
         description: productCard.querySelector('.product-description')?.textContent || 'Chaussures en cuir véritable'
     };
     
-    // Stocker les données dans localStorage
-    localStorage.setItem('selectedProductName', productData.name);
-    localStorage.setItem('selectedProductPrice', productData.price);
-    localStorage.setItem('selectedProductSize', productData.size);
-    localStorage.setItem('selectedProductCategory', productData.category);
-    localStorage.setItem('selectedProductImage', productData.image);
-    localStorage.setItem('selectedProductDescription', productData.description);
+    // Stocker l'objet produit complet dans localStorage
+    localStorage.setItem('selectedProduct', JSON.stringify(productData));
     
     // Rediriger vers la page de confirmation
     window.location.href = 'confirmation-commande.html';

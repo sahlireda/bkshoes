@@ -13,28 +13,36 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function loadProductGallery() {
     // Récupérer les données du produit depuis localStorage
-    let selectedProduct = JSON.parse(localStorage.getItem('selectedProduct') || '{}');
-    
-    // Si pas de données dans le nouveau format, essayer l'ancien format
-    if (!selectedProduct.name) {
+    const selectedProductData = localStorage.getItem('selectedProduct');
+    let selectedProduct = {};
+
+    if (selectedProductData) {
+        selectedProduct = JSON.parse(selectedProductData);
+    } else {
+        // Fallback si 'selectedProduct' n'est pas trouvé (pour compatibilité ou debug)
         selectedProduct = {
-            name: localStorage.getItem('selectedProductName') || 'Produit sélectionné',
-            price: localStorage.getItem('selectedProductPrice') || 'Prix non défini',
-            size: localStorage.getItem('selectedProductSize') || '--',
-            category: localStorage.getItem('selectedProductCategory') || 'mocassins',
-            image: localStorage.getItem('selectedProductImage') || '',
-            description: localStorage.getItem('selectedProductDescription') || 'Description du produit',
+            name: 'Produit sélectionné',
+            price: 'Prix non défini',
+            size: '--',
+            category: 'mocassins',
+            image: '',
+            description: 'Description du produit',
             images: []
         };
-        
-        // Ajouter l'image principale aux images si elle existe
-        if (selectedProduct.image) {
-            selectedProduct.images.push(selectedProduct.image);
-        }
+    }
+    
+    // Assurez-vous que 'images' est un tableau
+    if (!selectedProduct.images || !Array.isArray(selectedProduct.images)) {
+        selectedProduct.images = [];
+    }
+
+    // Si l'image principale existe mais n'est pas dans le tableau d'images, l'ajouter
+    if (selectedProduct.image && !selectedProduct.images.includes(selectedProduct.image)) {
+        selectedProduct.images.unshift(selectedProduct.image);
     }
     
     // Si toujours pas d'images, charger les images par défaut
-    if (!selectedProduct.images || selectedProduct.images.length === 0) {
+    if (selectedProduct.images.length === 0) {
         loadDefaultImages(selectedProduct);
     } else {
         displayProductGallery(selectedProduct);
